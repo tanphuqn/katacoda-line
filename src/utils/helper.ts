@@ -80,17 +80,14 @@ export const startQuickReply = (app_id: string, profile: Profile) => {
 
   const text1: TextMessage = {
     "type": "text", // ①
-    "text": `人によって肌状態は千差万別。
-    ベストなスキンケア方法も人それぞれに異なります。
-    
-    かんたんな質問に答えるだけで、${profile.displayName}さんに合ったケア方法をご紹介します☺️`,
+    "text": `Welcome to my channel`,
   }
 
   messages.push(text1)
 
   const quickReply: Message = {
     "type": "text", // ①
-    "text": "▼下のボタンをタップ▼",
+    "text": "Let's go",
     "quickReply": { // ②
       "items": [
         {
