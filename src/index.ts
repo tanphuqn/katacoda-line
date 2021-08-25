@@ -62,92 +62,92 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         return;
     }
 
-    // // Process all message related variables here.
-    // const { replyToken } = event;
-    // // Load question from api
-    // const app_id = process.env.APP_ID || ''
-    // let question_id = ''
-    // let answer_id = ''
-    // let event_type = ''
-    // let messages: Message[] = []
-    // let title = ''
-    // if (event.type === 'postback') {
-    //     const data = event.postback.data
-    //     let params = new URLSearchParams(data);
-    //     question_id = params.get("question_id") || '';
-    //     answer_id = params.get("answer_id") || '';
-    //     event_type = params.get("event_type") || '';
-    //     // Check the end survey
-    //     if (params.get("app_id") === '') {
-    //         // TODO the sumarry survey
-    //         return
-    //     }
+    // Process all message related variables here.
+    const { replyToken } = event;
+    // Load question from api
+    const app_id = process.env.APP_ID || ''
+    let question_id = ''
+    let answer_id = ''
+    let event_type = ''
+    let messages: Message[] = []
+    let title = ''
+    if (event.type === 'postback') {
+        const data = event.postback.data
+        let params = new URLSearchParams(data);
+        question_id = params.get("question_id") || '';
+        answer_id = params.get("answer_id") || '';
+        event_type = params.get("event_type") || '';
+        // Check the end survey
+        if (params.get("app_id") === '') {
+            // TODO the sumarry survey
+            return
+        }
 
-    //     if (event_type === constant.event_type.answer || event_type === constant.event_type.start) {
-    //         if ((question_id !== '' && answer_id !== '') || event_type === constant.event_type.start) {
-    //             const question: IAppQuestion = await appQuestionApi.single({ app_id: app_id, question_id: question_id })
-    //             console.log("question", question)
-    //             if (question.messages && question.messages?.length > 1) {
-    //                 for (let index = 0; index < question.messages.length - 1; index++) {
-    //                     const element: IAppMessage = question.messages[index];
-    //                     const message: TextMessage = {
-    //                         type: 'text',
-    //                         text: element.data ?? ''
-    //                     };
+        if (event_type === constant.event_type.answer || event_type === constant.event_type.start) {
+            if ((question_id !== '' && answer_id !== '') || event_type === constant.event_type.start) {
+                const question: IAppQuestion = await appQuestionApi.single({ app_id: app_id, question_id: question_id })
+                console.log("question", question)
+                if (question.messages && question.messages?.length > 1) {
+                    for (let index = 0; index < question.messages.length - 1; index++) {
+                        const element: IAppMessage = question.messages[index];
+                        const message: TextMessage = {
+                            type: 'text',
+                            text: element.data ?? ''
+                        };
 
-    //                     // Reply to the user.
-    //                     messages.push(message)
-    //                 }
+                        // Reply to the user.
+                        messages.push(message)
+                    }
 
-    //                 const element: IAppMessage = question.messages[question.messages.length - 1];
-    //                 title = element.data ?? ''
-    //             }
-    //             else {
-    //                 if (question.messages && question.messages.length > 0) {
-    //                     const element: IAppMessage = question.messages[0];
-    //                     title = element.data ?? ''
-    //                 }
+                    const element: IAppMessage = question.messages[question.messages.length - 1];
+                    title = element.data ?? ''
+                }
+                else {
+                    if (question.messages && question.messages.length > 0) {
+                        const element: IAppMessage = question.messages[0];
+                        title = element.data ?? ''
+                    }
 
-    //             }
-    //             // Create a new message.
-    //             const message: Message = quickReply(question, title)
-    //             messages.push(message)
-    //         }
-    //         else {
-    //             // Final question
-    //             const message: TextMessage = {
-    //                 type: 'text',
-    //                 text: "Thank you so much"
-    //             };
-    //             // Reply to the user.
-    //             messages.push(message)
-    //         }
+                }
+                // Create a new message.
+                const message: Message = quickReply(question, title)
+                messages.push(message)
+            }
+            else {
+                // Final question
+                const message: TextMessage = {
+                    type: 'text',
+                    text: "Thank you so much"
+                };
+                // Reply to the user.
+                messages.push(message)
+            }
 
-    //         console.log("messages", messages)
-    //         // Reply to the user.
-    //         await client.replyMessage(replyToken, messages);
-    //     }
-    //     else if (event_type === constant.event_type.welcome) {
-    //         // Create a new message.
-    //         const profile: Profile = await client.getProfile(event.source.userId ?? '')
-    //         const message: Message[] = startQuickReply(app_id, profile)
-    //         // Reply to the user.
-    //         await client.replyMessage(replyToken, message);
-    //     }
-    //     else {
-    //         // TODO
-    //     }
+            console.log("messages", messages)
+            // Reply to the user.
+            await client.replyMessage(replyToken, messages);
+        }
+        else if (event_type === constant.event_type.welcome) {
+            // Create a new message.
+            const profile: Profile = await client.getProfile(event.source.userId ?? '')
+            const message: Message[] = startQuickReply(app_id, profile)
+            // Reply to the user.
+            await client.replyMessage(replyToken, message);
+        }
+        else {
+            // TODO
+        }
 
 
-    // } else {
-    //     if (event.type !== 'message') {
-    //         // Create a new message.
-    //         const profile: Profile = await client.getProfile(event.source.userId ?? '')
-    //         const message: Message[] = startQuickReply(app_id, profile)
-    //         // Reply to the user.
-    //         await client.replyMessage(replyToken, message);
-    //     }
-    // }
+    } else {
+        if (event.type !== 'message') {
+            // Create a new message.
+            const profile: Profile = await client.getProfile(event.source.userId ?? '')
+            const message: Message[] = startQuickReply(app_id, profile)
+            // Reply to the user.
+            await client.replyMessage(replyToken, message);
+        }
+    }
 
     return;
 };
