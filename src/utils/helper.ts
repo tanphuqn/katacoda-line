@@ -73,8 +73,6 @@ export const getAnswerButtons = (question: IAppQuestion) => {
   return answers
 }
 
-
-
 export const startQuickReply = (app_id: string, profile: Profile) => {
   const messages: Message[] = []
 

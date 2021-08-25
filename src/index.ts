@@ -17,7 +17,7 @@ import * as fs from "fs";
 import express, { Application, Request, Response } from 'express';
 import appQuestionApi from './api/app-question'
 import { createMenu, quickReply, startQuickReply } from './utils/helper';
-import { IAppAnswer, IAppQuestion, IAppMessage } from './utils/types';
+import { IAppAnswer, IAppQuestion, IAppMessage, IAppEndPoint } from './utils/types';
 import { constant } from './utils/constant';
 // Setup all LINE client and Express configurations.
 const clientConfig: ClientConfig = {
@@ -32,9 +32,7 @@ const middlewareConfig: MiddlewareConfig = {
 
 const PORT = process.env.PORT || 3000;
 const APP_ID: string = process.env.APP_ID || '';
-// Create a new LINE SDK client.
 const client = new Client(clientConfig);
-// Create a new Express application.
 const app: Application = express();
 
 const init = async (): Promise<string | undefined> => {
@@ -45,7 +43,7 @@ const init = async (): Promise<string | undefined> => {
 
     console.log("Init end")
 
-    return ''
+    return;
 };
 
 init();
@@ -65,7 +63,6 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
     // Process all message related variables here.
     const { replyToken } = event;
     // Load question from api
-    const app_id = process.env.APP_ID || ''
     let group_id = ''
     let question_id = ''
     let answer_id = ''
@@ -86,9 +83,28 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         }
 
         if (event_type === constant.event_type.answer || event_type === constant.event_type.start) {
-            if ((question_id !== '' || answer_id !== '') || event_type === constant.event_type.start) {
-                const question: IAppQuestion = await appQuestionApi.single({ app_id: app_id, question_id: question_id, group_id: group_id, answer_id: answer_id })
-                console.log("question", question)
+            const endPoint: IAppEndPoint = await appQuestionApi.single({
+                app_id: APP_ID, question_id: question_id,
+                group_id: group_id, answer_id: answer_id
+            })
+            console.log("IAppEndPoint", endPoint)
+            const question: IAppQuestion = endPoint.next_question
+            console.log("IAppQuestion", question)
+            // Finall survery, go to Goal and Next group
+            if (question == null) {
+                const nextGroups = endPoint.next_groups
+                const goals = endPoint.goals
+
+                // Final question
+                const message: TextMessage = {
+                    type: 'text',
+                    text: "Thank you so much"
+                };
+                // Reply to the user.
+                messages.push(message)
+            }
+            else {
+                // Next question
                 if (question.messages && question.messages?.length > 1) {
                     for (let index = 0; index < question.messages.length - 1; index++) {
                         const element: IAppMessage = question.messages[index];
@@ -111,30 +127,17 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
                     }
 
                 }
+
                 // Create a new message.
                 const message: Message = quickReply(question, title)
                 messages.push(message)
             }
-            else {
-                // Final question
-                const message: TextMessage = {
-                    type: 'text',
-                    text: "Thank you so much"
-                };
-                // Reply to the user.
-                messages.push(message)
-            }
 
-            console.log("messages", messages)
-            // Reply to the user.
-            await client.replyMessage(replyToken, messages);
         }
         else if (event_type === constant.event_type.welcome) {
             // Create a new message.
             const profile: Profile = await client.getProfile(event.source.userId ?? '')
-            const message: Message[] = startQuickReply(app_id, profile)
-            // Reply to the user.
-            await client.replyMessage(replyToken, message);
+            messages.concat(startQuickReply(APP_ID, profile))
         }
         else {
             // TODO
@@ -145,12 +148,15 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         if (event.type !== 'message') {
             // Create a new message.
             const profile: Profile = await client.getProfile(event.source.userId ?? '')
-            const message: Message[] = startQuickReply(app_id, profile)
-            // Reply to the user.
-            await client.replyMessage(replyToken, message);
+            messages.concat(startQuickReply(APP_ID, profile))
         }
     }
 
+    console.log("messages", messages)
+    if (messages.length > 0) {
+        // Reply to the user.
+        await client.replyMessage(replyToken, messages);
+    }
     return;
 };
 
