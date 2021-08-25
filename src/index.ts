@@ -64,22 +64,23 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
     // Load question from api
     const app_id = process.env.APP_ID || ''
     let question_id = ''
+    let answer_id = ''
     let messages: Message[] = []
-
+    let title = ''
     if (event.type === 'postback') {
         const data = event.postback.data
         let params = new URLSearchParams(data);
         question_id = params.get("question_id") || '';
-
+        answer_id = params.get("answer_id") || '';
         // Check the end survey
         if (params.get("app_id") === '') {
             // TODO the sumarry survey
             return
         }
-        const question: IAppQuestion = await appQuestionApi.single({ app_id: app_id, question_id: question_id })
-        console.log("question", question)
-        let title = ''
-        if (question.answers && question.answers.length > 0) {
+
+        if (question_id !== '' && answer_id !== '') {
+            const question: IAppQuestion = await appQuestionApi.single({ app_id: app_id, question_id: question_id })
+            console.log("question", question)
             if (question.messages && question.messages?.length > 1) {
                 for (let index = 0; index < question.messages.length - 1; index++) {
                     const element: IAppMessage = question.messages[index];
