@@ -78,16 +78,16 @@ export const getAnswerButtons = (question: IAppQuestion) => {
 export const startQuickReply = (app_id: string, profile: Profile) => {
   const messages: Message[] = []
 
-  const text1: TextMessage = {
-    "type": "text", // ①
-    "text": `Welcome to my channel`,
-  }
+  // const text1: TextMessage = {
+  //   "type": "text", // ①
+  //   "text": `Welcome to my channel`,
+  // }
 
-  messages.push(text1)
+  // messages.push(text1)
 
   const quickReply: Message = {
     "type": "text", // ①
-    "text": "Let's go",
+    "text": "",
     "quickReply": { // ②
       "items": [
         {
