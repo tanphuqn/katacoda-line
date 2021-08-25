@@ -57,7 +57,11 @@ init();
 const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponseBase | undefined> => {
     console.log("event", event);
     // Process all variables here.
-    if (event.type !== 'join' && event.type !== 'message' && event.type !== 'postback') {
+    if (event.type !== 'join'
+        && event.type !== 'follow'
+        && event.type !== 'memberJoined'
+        && event.type !== 'message'
+        && event.type !== 'postback') {
         return;
     }
 
@@ -138,7 +142,17 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         }
 
 
+    } else {
+        if (event.type !== 'message') {
+            // Create a new message.
+            const profile: Profile = await client.getProfile(event.source.userId ?? '')
+            const message: Message[] = startQuickReply(app_id, profile)
+            // Reply to the user.
+            await client.replyMessage(replyToken, message);
+        }
     }
+
+
 
 
 
