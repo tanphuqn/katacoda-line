@@ -115,7 +115,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
             }
 
         }
-        console.log("quickReply", quickReply(question, title))
+        console.log("messages", messages)
         // Create a new message.
         const response: Message = quickReply(question, title)
         messages.push(response)
