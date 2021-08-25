@@ -80,7 +80,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         console.log("question", question)
         let title = ''
         if (question.messages && question.messages?.length > 1) {
-            for (let index = 0; index < question.messages.length - 2; index++) {
+            for (let index = 0; index < question.messages.length - 1; index++) {
                 const element: IAppMessage = question.messages[index];
                 const message: TextMessage = {
                     type: 'text',
