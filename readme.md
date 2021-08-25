@@ -18,3 +18,10 @@ heroku logs --tail
 ### multicast
  https://line.github.io/line-bot-sdk-nodejs/api-reference/client.html#methods
 
+
+
+git add . && git commit -m "Update" && git push
+
+
+https://www.katacoda.com/courses/nodejs/playground
+git pull && npm run build && npm run start
