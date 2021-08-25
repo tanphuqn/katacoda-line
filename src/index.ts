@@ -101,7 +101,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
                 };
 
                 // Reply to the user.
-                await client.pushMessage(replyToken, message);
+                await client.replyMessage(replyToken, message);
             }
 
             const element: IAppMessage = question.messages[question.messages.length];
