@@ -53,10 +53,7 @@ init();
 
 // Function handler to receive the text.
 const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponseBase | undefined> => {
-
     console.log("event", event);
-
-
     // Process all variables here.
     if (event.type !== 'join' && event.type !== 'message' && event.type !== 'postback') {
         return;
@@ -64,17 +61,6 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
 
     // Process all message related variables here.
     const { replyToken } = event;
-    if (event.type === 'join') {
-        const message: Message = {
-            type: 'text',
-            text: 'Hello World!'
-        };
-
-        // Reply to the user.
-        await client.pushMessage(replyToken, message);
-    }
-
-
     // Load question from api
     const app_id = process.env.APP_ID || ''
     let question_id = ''
@@ -96,7 +82,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         if (question.messages && question.messages?.length > 1) {
             for (let index = 0; index < question.messages.length - 2; index++) {
                 const element: IAppMessage = question.messages[index];
-                const message: Message = {
+                const message: TextMessage = {
                     type: 'text',
                     text: element.data ?? ''
                 };
