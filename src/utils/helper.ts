@@ -2,6 +2,7 @@
 import {
   Message,
   RichMenu,
+  TextMessage,
 } from '@line/bot-sdk';
 import { constant } from './constant';
 import { IAppAnswer, IAppQuestion } from './types';
@@ -74,7 +75,19 @@ export const getAnswerButtons = (question: IAppQuestion) => {
 
 
 export const startQuickReply = (app_id: string) => {
-  const response: Message = {
+  const messages: Message[] = []
+
+  const text1: TextMessage = {
+    "type": "text", // ①
+    "text": `人によって肌状態は千差万別。
+    ベストなスキンケア方法も人それぞれに異なります。
+    
+    かんたんな質問に答えるだけで、ABCさんに合ったケア方法をご紹介します☺️`,
+  }
+
+  messages.push(text1)
+
+  const quickReply: Message = {
     "type": "text", // ①
     "text": "▼下のボタンをタップ▼",
     "quickReply": { // ②
@@ -92,8 +105,8 @@ export const startQuickReply = (app_id: string) => {
       ],
     }
   }
-
-  return response
+  messages.push(quickReply)
+  return messages
 }
 
 
