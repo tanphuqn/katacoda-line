@@ -94,7 +94,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         console.log("question", question)
         let title = ''
         if (question.messages && question.messages?.length > 1) {
-            for (let index = 0; index < question.messages.length - 1; index++) {
+            for (let index = 0; index < question.messages.length - 2; index++) {
                 const element: IAppMessage = question.messages[index];
                 const message: Message = {
                     type: 'text',
@@ -105,7 +105,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
                 messages.push(message)
             }
 
-            const element: IAppMessage = question.messages[question.messages.length];
+            const element: IAppMessage = question.messages[question.messages.length - 1];
             title = element.data ?? ''
         }
         else {
