@@ -76,7 +76,7 @@ export const getAnswerButtons = (question: IAppQuestion) => {
 export const startQuickReply = (app_id: string) => {
   const response: Message = {
     "type": "text", // ①
-    "text": " 👉診断スタート",
+    "text": "▼下のボタンをタップ▼",
     "quickReply": { // ②
       "items": [
         {
