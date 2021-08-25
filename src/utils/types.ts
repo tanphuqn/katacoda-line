@@ -28,6 +28,7 @@ export interface IAppQuestion {
   answers?: IAppAnswer[]
   messages?: IAppMessage[]
   app_id?: string
+  group_id?: string
   user_id?: string
   created_at?: string
   updated_at?: string

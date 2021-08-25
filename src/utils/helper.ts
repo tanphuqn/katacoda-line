@@ -56,7 +56,7 @@ export const getButton = (question: IAppQuestion, answer: IAppAnswer) => {
     'action': {
       'type': 'postback',
       'label': answer.title ?? '',
-      'data': `app_id=${question.app_id}&question_id=${answer.next_question_id}&answer_id=${answer._id}&event_type=${constant.event_type.answer}`,
+      'data': `app_id=${question.app_id}&group_id=${question.group_id}&question_id=${answer.next_question_id}&answer_id=${answer._id}&event_type=${constant.event_type.answer}`,
       'text': answer.title ?? '',
     },
   }

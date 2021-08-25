@@ -66,6 +66,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
     const { replyToken } = event;
     // Load question from api
     const app_id = process.env.APP_ID || ''
+    let group_id = ''
     let question_id = ''
     let answer_id = ''
     let event_type = ''
@@ -74,6 +75,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
     if (event.type === 'postback') {
         const data = event.postback.data
         let params = new URLSearchParams(data);
+        group_id = params.get("group_id") || '';
         question_id = params.get("question_id") || '';
         answer_id = params.get("answer_id") || '';
         event_type = params.get("event_type") || '';
@@ -85,7 +87,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
 
         if (event_type === constant.event_type.answer || event_type === constant.event_type.start) {
             if ((question_id !== '' || answer_id !== '') || event_type === constant.event_type.start) {
-                const question: IAppQuestion = await appQuestionApi.single({ app_id: app_id, question_id: question_id })
+                const question: IAppQuestion = await appQuestionApi.single({ app_id: app_id, question_id: question_id, group_id: group_id, answer_id: answer_id })
                 console.log("question", question)
                 if (question.messages && question.messages?.length > 1) {
                     for (let index = 0; index < question.messages.length - 1; index++) {
