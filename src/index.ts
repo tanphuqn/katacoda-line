@@ -129,7 +129,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
             // Create a new message.
             const message: Message = startQuickReply(app_id)
             // Reply to the user.
-            await client.pushMessage(replyToken, message);
+            await client.replyMessage(replyToken, message);
         }
 
 
