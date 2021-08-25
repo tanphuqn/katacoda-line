@@ -15,8 +15,9 @@ import {
 import * as fs from "fs";
 import express, { Application, Request, Response } from 'express';
 import appQuestionApi from './api/app-question'
-import { createMenu, quickReply } from './utils/helper';
+import { createMenu, quickReply, startQuickReply } from './utils/helper';
 import { IAppAnswer, IAppQuestion, IAppMessage } from './utils/types';
+import { constant } from './utils/constant';
 // Setup all LINE client and Express configurations.
 const clientConfig: ClientConfig = {
     channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || '',
@@ -65,6 +66,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
     const app_id = process.env.APP_ID || ''
     let question_id = ''
     let answer_id = ''
+    let event_type = ''
     let messages: Message[] = []
     let title = ''
     if (event.type === 'postback') {
@@ -72,54 +74,65 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         let params = new URLSearchParams(data);
         question_id = params.get("question_id") || '';
         answer_id = params.get("answer_id") || '';
+        event_type = params.get("event_type") || '';
         // Check the end survey
         if (params.get("app_id") === '') {
             // TODO the sumarry survey
             return
         }
 
-        if (question_id !== '' && answer_id !== '') {
-            const question: IAppQuestion = await appQuestionApi.single({ app_id: app_id, question_id: question_id })
-            console.log("question", question)
-            if (question.messages && question.messages?.length > 1) {
-                for (let index = 0; index < question.messages.length - 1; index++) {
-                    const element: IAppMessage = question.messages[index];
-                    const message: TextMessage = {
-                        type: 'text',
-                        text: element.data ?? ''
-                    };
+        if (event_type === constant.event_type.answer || event_type === constant.event_type.start) {
+            if ((question_id !== '' && answer_id !== '') || event_type === constant.event_type.start) {
+                const question: IAppQuestion = await appQuestionApi.single({ app_id: app_id, question_id: question_id })
+                console.log("question", question)
+                if (question.messages && question.messages?.length > 1) {
+                    for (let index = 0; index < question.messages.length - 1; index++) {
+                        const element: IAppMessage = question.messages[index];
+                        const message: TextMessage = {
+                            type: 'text',
+                            text: element.data ?? ''
+                        };
 
-                    // Reply to the user.
-                    messages.push(message)
-                }
+                        // Reply to the user.
+                        messages.push(message)
+                    }
 
-                const element: IAppMessage = question.messages[question.messages.length - 1];
-                title = element.data ?? ''
-            }
-            else {
-                if (question.messages && question.messages.length > 0) {
-                    const element: IAppMessage = question.messages[0];
+                    const element: IAppMessage = question.messages[question.messages.length - 1];
                     title = element.data ?? ''
                 }
+                else {
+                    if (question.messages && question.messages.length > 0) {
+                        const element: IAppMessage = question.messages[0];
+                        title = element.data ?? ''
+                    }
 
+                }
+                // Create a new message.
+                const message: Message = quickReply(question, title)
+                messages.push(message)
             }
-            // Create a new message.
-            const message: Message = quickReply(question, title)
-            messages.push(message)
-        }
-        else {
-            // Final question
-            const message: TextMessage = {
-                type: 'text',
-                text: "Thank you so much"
-            };
+            else {
+                // Final question
+                const message: TextMessage = {
+                    type: 'text',
+                    text: "Thank you so much"
+                };
+                // Reply to the user.
+                messages.push(message)
+            }
+
+            console.log("messages", messages)
             // Reply to the user.
-            messages.push(message)
+            await client.replyMessage(replyToken, messages);
+        }
+        else if (event_type === constant.event_type.welcome) {
+            // Create a new message.
+            const message: Message = startQuickReply(app_id)
+            // Reply to the user.
+            await client.pushMessage(replyToken, message);
         }
 
-        console.log("messages", messages)
-        // Reply to the user.
-        await client.replyMessage(replyToken, messages);
+
     }
 
 

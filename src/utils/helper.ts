@@ -3,6 +3,7 @@ import {
   Message,
   RichMenu,
 } from '@line/bot-sdk';
+import { constant } from './constant';
 import { IAppAnswer, IAppQuestion } from './types';
 
 export const createMenu = (app_id: string) => {
@@ -24,9 +25,7 @@ export const createMenu = (app_id: string) => {
         },
         "action": {
           "type": "postback",
-          "label": "Start",
-          'data': `app_id=${app_id}`,
-          'text': "Start",
+          'data': `app_id=${app_id}&event_type=${constant.event_type.welcome}`,
         }
       }
     ]
@@ -55,7 +54,7 @@ export const getButton = (question: IAppQuestion, answer: IAppAnswer) => {
     'action': {
       'type': 'postback',
       'label': answer.title ?? '',
-      'data': `app_id=${question.app_id}&question_id=${answer.next_question_id}&answer_id=${answer._id}`,
+      'data': `app_id=${question.app_id}&question_id=${answer.next_question_id}&answer_id=${answer._id}&event_type=${constant.event_type.answer}`,
       'text': answer.title ?? '',
     },
   }
@@ -71,5 +70,31 @@ export const getAnswerButtons = (question: IAppQuestion) => {
 
   return answers
 }
+
+
+
+export const startQuickReply = (app_id: string) => {
+  const response: Message = {
+    "type": "text", // ①
+    "text": " 👉診断スタート",
+    "quickReply": { // ②
+      "items": [
+        {
+          'type': 'action',
+          // "imageUrl": "https://example.com/sushi.png",
+          'action': {
+            'type': 'postback',
+            'label': '👉診断スタート',
+            'data': `app_id=${app_id}&event_type=${constant.event_type.start}`,
+            'text': '👉診断スタート',
+          },
+        }
+      ],
+    }
+  }
+
+  return response
+}
+
 
 
