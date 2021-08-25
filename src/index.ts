@@ -78,6 +78,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
     // Load question from api
     const app_id = process.env.APP_ID || ''
     let question_id = ''
+    let messages: Message[] = []
 
     if (event.type === 'postback') {
         const data = event.postback.data
@@ -101,7 +102,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
                 };
 
                 // Reply to the user.
-                await client.replyMessage(replyToken, message);
+                messages.push(message)
             }
 
             const element: IAppMessage = question.messages[question.messages.length];
@@ -117,10 +118,12 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         console.log("quickReply", quickReply(question, title))
         // Create a new message.
         const response: Message = quickReply(question, title)
+        messages.push(response)
 
-        // Reply to the user.
-        await client.replyMessage(replyToken, response);
     }
+
+    // Reply to the user.
+    await client.replyMessage(replyToken, messages);
 
     return;
 };
