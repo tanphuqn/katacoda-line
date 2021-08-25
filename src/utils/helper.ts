@@ -1,6 +1,7 @@
 // Import all dependencies, mostly using destructuring for better view.
 import {
   Message,
+  Profile,
   RichMenu,
   TextMessage,
 } from '@line/bot-sdk';
@@ -74,7 +75,7 @@ export const getAnswerButtons = (question: IAppQuestion) => {
 
 
 
-export const startQuickReply = (app_id: string) => {
+export const startQuickReply = (app_id: string, profile: Profile) => {
   const messages: Message[] = []
 
   const text1: TextMessage = {
@@ -82,7 +83,7 @@ export const startQuickReply = (app_id: string) => {
     "text": `人によって肌状態は千差万別。
     ベストなスキンケア方法も人それぞれに異なります。
     
-    かんたんな質問に答えるだけで、ABCさんに合ったケア方法をご紹介します☺️`,
+    かんたんな質問に答えるだけで、${profile.displayName}さんに合ったケア方法をご紹介します☺️`,
   }
 
   messages.push(text1)

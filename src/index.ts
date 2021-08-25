@@ -11,6 +11,7 @@ import {
     MessageAPIResponseBase,
     FlexContainer,
     Message,
+    Profile,
 } from '@line/bot-sdk';
 import * as fs from "fs";
 import express, { Application, Request, Response } from 'express';
@@ -127,7 +128,8 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         }
         else if (event_type === constant.event_type.welcome) {
             // Create a new message.
-            const message: Message[] = startQuickReply(app_id)
+            const profile: Profile = await client.getProfile(event.source.userId ?? '')
+            const message: Message[] = startQuickReply(app_id, profile)
             // Reply to the user.
             await client.replyMessage(replyToken, message);
         }
