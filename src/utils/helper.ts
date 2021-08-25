@@ -87,7 +87,7 @@ export const startQuickReply = (app_id: string, profile: Profile) => {
 
   const quickReply: Message = {
     "type": "text", // ①
-    "text": "",
+    "text": "Welcome ",
     "quickReply": { // ②
       "items": [
         {
