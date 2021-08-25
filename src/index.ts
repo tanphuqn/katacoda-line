@@ -125,11 +125,14 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
             // Reply to the user.
             await client.replyMessage(replyToken, messages);
         }
-        else {
+        else if (event_type === constant.event_type.welcome) {
             // Create a new message.
             const message: Message[] = startQuickReply(app_id)
             // Reply to the user.
             await client.replyMessage(replyToken, message);
+        }
+        else {
+            // TODO
         }
 
 
