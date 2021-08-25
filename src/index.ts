@@ -84,7 +84,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         }
 
         if (event_type === constant.event_type.answer || event_type === constant.event_type.start) {
-            if ((question_id !== '' && answer_id !== '') || event_type === constant.event_type.start) {
+            if ((question_id !== '' || answer_id !== '') || event_type === constant.event_type.start) {
                 const question: IAppQuestion = await appQuestionApi.single({ app_id: app_id, question_id: question_id })
                 console.log("question", question)
                 if (question.messages && question.messages?.length > 1) {
