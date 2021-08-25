@@ -79,33 +79,44 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         const question: IAppQuestion = await appQuestionApi.single({ app_id: app_id, question_id: question_id })
         console.log("question", question)
         let title = ''
-        if (question.messages && question.messages?.length > 1) {
-            for (let index = 0; index < question.messages.length - 1; index++) {
-                const element: IAppMessage = question.messages[index];
-                const message: TextMessage = {
-                    type: 'text',
-                    text: element.data ?? ''
-                };
+        if (question.answers && question.answers.length > 0) {
+            if (question.messages && question.messages?.length > 1) {
+                for (let index = 0; index < question.messages.length - 1; index++) {
+                    const element: IAppMessage = question.messages[index];
+                    const message: TextMessage = {
+                        type: 'text',
+                        text: element.data ?? ''
+                    };
 
-                // Reply to the user.
-                messages.push(message)
-            }
+                    // Reply to the user.
+                    messages.push(message)
+                }
 
-            const element: IAppMessage = question.messages[question.messages.length - 1];
-            title = element.data ?? ''
-        }
-        else {
-            if (question.messages && question.messages.length > 0) {
-                const element: IAppMessage = question.messages[0];
+                const element: IAppMessage = question.messages[question.messages.length - 1];
                 title = element.data ?? ''
             }
+            else {
+                if (question.messages && question.messages.length > 0) {
+                    const element: IAppMessage = question.messages[0];
+                    title = element.data ?? ''
+                }
 
+            }
+            // Create a new message.
+            const message: Message = quickReply(question, title)
+            messages.push(message)
         }
-        console.log("messages", messages)
-        // Create a new message.
-        const response: Message = quickReply(question, title)
-        messages.push(response)
+        else {
+            // Final question
+            const message: TextMessage = {
+                type: 'text',
+                text: "Thank you so much"
+            };
+            // Reply to the user.
+            messages.push(message)
+        }
 
+        console.log("messages", messages)
         // Reply to the user.
         await client.replyMessage(replyToken, messages);
     }
