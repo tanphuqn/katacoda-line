@@ -35,10 +35,10 @@ export const createMenu = (app_id: string) => {
   return richmenu;
 }
 
-export const quickReply = (question: IAppQuestion) => {
+export const quickReply = (question: IAppQuestion, title: string) => {
   const response: Message = {
     "type": "text", // ①
-    "text": question.title ?? '',
+    "text": title,
     "quickReply": { // ②
       "items": getAnswerButtons(question),
     }

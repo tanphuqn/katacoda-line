@@ -57,8 +57,8 @@ export interface IAppEndPoint {
 }
 
 export interface IQuestionPayload {
-  app_id: string
-  question_id: string
-  group_id: string
-  answer_id: string
+  app_id?: string
+  question_id?: string
+  group_id?: string
+  answer_id?: string
 }

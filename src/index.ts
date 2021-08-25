@@ -16,6 +16,7 @@ import * as fs from "fs";
 import express, { Application, Request, Response } from 'express';
 import appQuestionApi from './api/app-question'
 import { createMenu, quickReply } from './utils/helper';
+import { IAppAnswer, IAppQuestion, IAppMessage } from './utils/types';
 // Setup all LINE client and Express configurations.
 const clientConfig: ClientConfig = {
     channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || '',
@@ -88,11 +89,34 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
             // TODO the sumarry survey
             return
         }
-        const question = await appQuestionApi.single({ app_id: app_id, question_id: question_id })
+        const question: IAppQuestion = await appQuestionApi.single({ app_id: app_id, question_id: question_id })
         console.log("question", question)
-        console.log("quickReply", quickReply(question))
+        let title = ''
+        if (question.messages && question.messages?.length > 1) {
+            for (let index = 0; index < question.messages.length - 1; index++) {
+                const element: IAppMessage = question.messages[index];
+                const message: Message = {
+                    type: 'text',
+                    text: element.data ?? ''
+                };
+
+                // Reply to the user.
+                await client.pushMessage(replyToken, message);
+            }
+
+            const element: IAppMessage = question.messages[question.messages.length];
+            title = element.data ?? ''
+        }
+        else {
+            if (question.messages && question.messages.length > 0) {
+                const element: IAppMessage = question.messages[0];
+                title = element.data ?? ''
+            }
+
+        }
+        console.log("quickReply", quickReply(question, title))
         // Create a new message.
-        const response: Message = quickReply(question)
+        const response: Message = quickReply(question, title)
 
         // Reply to the user.
         await client.replyMessage(replyToken, response);
