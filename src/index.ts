@@ -15,10 +15,11 @@ import {
 } from '@line/bot-sdk';
 import * as fs from "fs";
 import express, { Application, Request, Response } from 'express';
-import appQuestionApi from './api/app-question'
+import appQuestionApi from './api/question'
 import { createMenu, quickReply, startQuickReply } from './utils/helper';
 import { IAppAnswer, IAppQuestion, IAppMessage, IAppEndPoint } from './utils/types';
 import { constant } from './utils/constant';
+import RenderMessage from './utils/renderMessage';
 // Setup all LINE client and Express configurations.
 const clientConfig: ClientConfig = {
     channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || '',
@@ -34,19 +35,22 @@ const PORT = process.env.PORT || 3000;
 const APP_ID: string = process.env.APP_ID || '';
 const client = new Client(clientConfig);
 const app: Application = express();
+const render = new RenderMessage({ client: client, app_id: APP_ID });
 
-const init = async (): Promise<string | undefined> => {
-    const richMenuId = await client.createRichMenu(createMenu(APP_ID))
-    console.log("richMenuId", richMenuId)
-    await client.setRichMenuImage(richMenuId, fs.createReadStream('./richmenu.jpeg'))
-    await client.setDefaultRichMenu(richMenuId)
+// const init = async (): Promise<string | undefined> => {
+//     const richMenuId = await client.createRichMenu(createMenu(APP_ID))
+//     console.log("richMenuId", richMenuId)
+//     await client.setRichMenuImage(richMenuId, fs.createReadStream('./richmenu.jpeg'))
+//     await client.setDefaultRichMenu(richMenuId)
 
-    console.log("Init end")
+//     console.log("Init end")
 
-    return;
-};
+//     return;
+// };
 
-init();
+// init();
+
+render.createRichMenu();
 
 // Function handler to receive the text.
 const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponseBase | undefined> => {
