@@ -52,7 +52,7 @@ export const getButton = (question: IAppQuestion, answer: IAppAnswer) => {
 
   return {
     'type': 'action',
-    // "imageUrl": "https://example.com/sushi.png",
+    "imageUrl": answer.image_url,
     'action': {
       'type': 'postback',
       'label': answer.title ?? '',

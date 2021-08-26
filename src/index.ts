@@ -37,19 +37,6 @@ const client = new Client(clientConfig);
 const app: Application = express();
 const render = new RenderMessage({ client: client, app_id: APP_ID });
 
-// const init = async (): Promise<string | undefined> => {
-//     const richMenuId = await client.createRichMenu(createMenu(APP_ID))
-//     console.log("richMenuId", richMenuId)
-//     await client.setRichMenuImage(richMenuId, fs.createReadStream('./richmenu.jpeg'))
-//     await client.setDefaultRichMenu(richMenuId)
-
-//     console.log("Init end")
-
-//     return;
-// };
-
-// init();
-
 render.createRichMenu();
 
 // Function handler to receive the text.
@@ -96,8 +83,17 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
             console.log("IAppQuestion", question)
             // Finall survery, go to Goal and Next group
             if (question == null) {
-                const nextGroups = endPoint.next_groups
-                const goals = endPoint.goals
+                // Get message of next groups
+                const groupMessages = render.getNextGroups(endPoint.next_groups)
+                if (groupMessages && groupMessages.length > 0) {
+                    messages = messages.concat(groupMessages);
+                }
+
+                // Reply to the user.
+                const goalMessages = render.getGoals(endPoint.goals)
+                if (goalMessages && goalMessages.length > 0) {
+                    messages = messages.concat(goalMessages);
+                }
 
                 // Final question
                 const message: TextMessage = {
@@ -109,32 +105,33 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
             }
             else {
                 // Next question
-                if (question.messages && question.messages?.length > 1) {
-                    for (let index = 0; index < question.messages.length - 1; index++) {
-                        const element: IAppMessage = question.messages[index];
-                        const message: TextMessage = {
-                            type: 'text',
-                            text: element.data ?? ''
-                        };
+                messages = messages.concat(render.getNextQuestion(question));
+                // if (question.messages && question.messages?.length > 1) {
+                //     for (let index = 0; index < question.messages.length - 1; index++) {
+                //         const element: IAppMessage = question.messages[index];
+                //         const message: TextMessage = {
+                //             type: 'text',
+                //             text: element.data ?? ''
+                //         };
 
-                        // Reply to the user.
-                        messages.push(message)
-                    }
+                //         // Reply to the user.
+                //         messages.push(message)
+                //     }
 
-                    const element: IAppMessage = question.messages[question.messages.length - 1];
-                    title = element.data ?? ''
-                }
-                else {
-                    if (question.messages && question.messages.length > 0) {
-                        const element: IAppMessage = question.messages[0];
-                        title = element.data ?? ''
-                    }
+                //     const element: IAppMessage = question.messages[question.messages.length - 1];
+                //     title = element.data ?? ''
+                // }
+                // else {
+                //     if (question.messages && question.messages.length > 0) {
+                //         const element: IAppMessage = question.messages[0];
+                //         title = element.data ?? ''
+                //     }
 
-                }
+                // }
 
-                // Create a new message.
-                const message: Message = quickReply(question, title)
-                messages.push(message)
+                // // Create a new message.
+                // const message: Message = quickReply(question, title)
+                // messages.push(message)
             }
 
         }

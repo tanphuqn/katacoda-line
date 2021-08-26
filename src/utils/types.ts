@@ -7,6 +7,7 @@ export interface IApp {
 export interface IAppAnswer {
   _id?: string
   title?: string
+  image_url: string
   next_question_id: string
 }
 
