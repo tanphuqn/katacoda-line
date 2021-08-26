@@ -17,6 +17,6 @@ export default class RenderMessage {
         await this.client.setRichMenuImage(richMenuId, fs.createReadStream('./richmenu.jpeg'))
         await this.client.setDefaultRichMenu(richMenuId)
 
-        console.log("Init end")
+        console.log("createRichMenu end")
     }
 }
