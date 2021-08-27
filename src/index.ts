@@ -91,7 +91,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
                 }
                 // Get message of next groups
                 if (endPoint.next_group && endPoint.next_group.groups && endPoint.next_group.groups.length > 0) {
-                    messages.push(render.getNextGroups(endPoint.next_group))
+                    messages.push(render.getNextGroups(APP_ID, endPoint.next_group))
                 }
                 else {
                     // Final question

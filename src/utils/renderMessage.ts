@@ -56,8 +56,8 @@ export default class RenderMessage {
         return messages
     }
 
-    public getNextGroups(nextGroup: INextGroup) {
-        return getGroupQuickReply(nextGroup)
+    public getNextGroups(app_id: string, nextGroup: INextGroup) {
+        return getGroupQuickReply(app_id, nextGroup)
     }
 
     public getGoal(goal: IGoal) {

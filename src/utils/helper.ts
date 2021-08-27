@@ -46,7 +46,7 @@ export const getQuestionQuickReply = (question: IQuestion, title: string) => {
     buttons.push(getAnswerPostbackButton(question, answer))
   });
 
-  buttons.push(getDefaultStartButton(question.app_id ?? "", question.group_id ? ""))
+  buttons.push(getDefaultStartButton(question.app_id ?? "", question.group_id ?? ""))
   const response: Message = {
     "type": "text", // ①
     "text": title,
