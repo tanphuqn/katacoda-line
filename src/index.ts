@@ -34,7 +34,7 @@ const client = new Client(clientConfig);
 const app: Application = express();
 const render = new RenderMessage({ client: client, app_id: APP_ID });
 
-render.createRichMenu();
+// render.createRichMenu();
 
 // Function handler to receive the text.
 const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponseBase | undefined> => {
