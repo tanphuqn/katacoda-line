@@ -1,7 +1,6 @@
 // Import all dependencies, mostly using destructuring for better view.
 import {
   Message,
-  PostbackAction,
   Profile,
   QuickReplyItem,
   RichMenu,
@@ -9,7 +8,7 @@ import {
   TextMessage,
 } from '@line/bot-sdk';
 import { constant } from './constant';
-import { IAnswer, IGoal, IGoalDetail, IGoalDetailImageType, IGroup, INextGroup, IQuestion } from './types';
+import { IAnswer, IGoal, IGoalDetailImageType, IGroup, INextGroup, IQuestion } from './types';
 
 export const createMenu = (app_id: string) => {
   const richmenu: RichMenu = {

@@ -1,8 +1,8 @@
 import { Client, Message, TextMessage } from "@line/bot-sdk";
 import * as fs from "fs";
 import { constant } from "./constant";
-import { createMenu, getQuestionQuickReply, startQuickReply, getGroupQuickReply, getTextMessage, getImageCarousel } from './helper';
-import { IGoal, IGroup, IMessage, INextGroup, IQuestion } from "./types";
+import { createMenu, getQuestionQuickReply, getGroupQuickReply, getTextMessage, getImageCarousel } from './helper';
+import { IGoal, IMessage, INextGroup, IQuestion } from "./types";
 
 export default class RenderMessage {
     private client: Client;

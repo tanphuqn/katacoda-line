@@ -1,4 +1,3 @@
-import console from 'console'
 import { IQuestion, IQuestionPayload } from '../utils/types'
 import { NormApi } from './norm'
 

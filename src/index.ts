@@ -7,13 +7,10 @@ import {
     MiddlewareConfig,
     WebhookEvent,
     TextMessage,
-    FlexMessage,
     MessageAPIResponseBase,
-    FlexContainer,
     Message,
     Profile,
 } from '@line/bot-sdk';
-import * as fs from "fs";
 import express, { Application, Request, Response } from 'express';
 import appQuestionApi from './api/question'
 import { startQuickReply } from './utils/helper';
