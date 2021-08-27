@@ -1,8 +1,8 @@
 import console from 'console'
-import { IAppQuestion, IQuestionPayload } from '../utils/types'
+import { IQuestion, IQuestionPayload } from '../utils/types'
 import { NormApi } from './norm'
 
-export class AppQuestionApi extends NormApi<IAppQuestion> {
+export class AppQuestionApi extends NormApi<IQuestion> {
   single = async (payload: IQuestionPayload) => {
     const response = await this.axios.post('/v1/line/question', payload)
     return this.responseHandler(response)

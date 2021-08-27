@@ -1,7 +1,7 @@
 import { Client, Message, TextMessage } from "@line/bot-sdk";
 import * as fs from "fs";
 import { createMenu, quickReply, startQuickReply } from './helper';
-import { IAppGoal, IAppGroup, IAppMessage, IAppQuestion } from "./types";
+import { IGoal, IGroup, IMessage, IQuestion } from "./types";
 
 export default class RenderMessage {
     private client: Client;
@@ -21,13 +21,13 @@ export default class RenderMessage {
         console.log("createRichMenu end")
     }
 
-    public getNextQuestion(question: IAppQuestion) {
+    public getNextQuestion(question: IQuestion) {
         let messages: Message[] = []
         let title: string = ''
         // Next question
         if (question.messages && question.messages?.length > 1) {
             for (let index = 0; index < question.messages.length - 1; index++) {
-                const element: IAppMessage = question.messages[index];
+                const element: IMessage = question.messages[index];
                 const message: TextMessage = {
                     type: 'text',
                     text: element.data ?? ''
@@ -37,12 +37,12 @@ export default class RenderMessage {
                 messages.push(message)
             }
 
-            const element: IAppMessage = question.messages[question.messages.length - 1];
+            const element: IMessage = question.messages[question.messages.length - 1];
             title = element.data ?? ''
         }
         else {
             if (question.messages && question.messages.length > 0) {
-                const element: IAppMessage = question.messages[0];
+                const element: IMessage = question.messages[0];
                 title = element.data ?? ''
             }
 
@@ -55,13 +55,48 @@ export default class RenderMessage {
         return messages
     }
 
-    public getNextGroups(nextGroups: IAppGroup) {
+    public getNextGroups(nextGroups: IGroup) {
         let messages: Message[] = []
         return messages
     }
 
-    public getGoals(goals: IAppGoal) {
+    public getGoals(goals: IGoal) {
         let messages: Message[] = []
+        const message: Message = {
+            "type": "template",
+            "altText": "this is a image carousel template",
+            "template": {
+                "type": "image_carousel",
+                "columns": [
+                    {
+                        "imageUrl": "https://example.com/bot/images/item1.jpg",
+                        "action": {
+                            "type": "postback",
+                            "label": "Buy",
+                            "data": "action=buy&itemid=111"
+                        }
+                    },
+                    {
+                        "imageUrl": "https://example.com/bot/images/item2.jpg",
+                        "action": {
+                            "type": "message",
+                            "label": "Yes",
+                            "text": "yes"
+                        }
+                    },
+                    {
+                        "imageUrl": "https://example.com/bot/images/item3.jpg",
+                        "action": {
+                            "type": "uri",
+                            "label": "View detail",
+                            "uri": "http://example.com/page/222"
+                        }
+                    }
+                ]
+            }
+        }
+
+        messages.push(message)
         return messages
     }
 }

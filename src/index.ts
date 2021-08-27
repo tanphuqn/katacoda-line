@@ -16,8 +16,8 @@ import {
 import * as fs from "fs";
 import express, { Application, Request, Response } from 'express';
 import appQuestionApi from './api/question'
-import { createMenu, quickReply, startQuickReply } from './utils/helper';
-import { IAppAnswer, IAppQuestion, IAppMessage, IAppEndPoint } from './utils/types';
+import { startQuickReply } from './utils/helper';
+import { IQuestion, IEndPoint } from './utils/types';
 import { constant } from './utils/constant';
 import RenderMessage from './utils/renderMessage';
 // Setup all LINE client and Express configurations.
@@ -74,12 +74,12 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         }
 
         if (event_type === constant.event_type.answer || event_type === constant.event_type.start) {
-            const endPoint: IAppEndPoint = await appQuestionApi.single({
+            const endPoint: IEndPoint = await appQuestionApi.single({
                 app_id: APP_ID, question_id: question_id,
                 group_id: group_id, answer_id: answer_id
             })
             console.log("IAppEndPoint", endPoint)
-            const question: IAppQuestion = endPoint.next_question
+            const question: IQuestion = endPoint.next_question
             console.log("IAppQuestion", question)
             // Finall survery, go to Goal and Next group
             if (question == null) {
@@ -106,32 +106,6 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
             else {
                 // Next question
                 messages = messages.concat(render.getNextQuestion(question));
-                // if (question.messages && question.messages?.length > 1) {
-                //     for (let index = 0; index < question.messages.length - 1; index++) {
-                //         const element: IAppMessage = question.messages[index];
-                //         const message: TextMessage = {
-                //             type: 'text',
-                //             text: element.data ?? ''
-                //         };
-
-                //         // Reply to the user.
-                //         messages.push(message)
-                //     }
-
-                //     const element: IAppMessage = question.messages[question.messages.length - 1];
-                //     title = element.data ?? ''
-                // }
-                // else {
-                //     if (question.messages && question.messages.length > 0) {
-                //         const element: IAppMessage = question.messages[0];
-                //         title = element.data ?? ''
-                //     }
-
-                // }
-
-                // // Create a new message.
-                // const message: Message = quickReply(question, title)
-                // messages.push(message)
             }
 
         }

@@ -6,7 +6,7 @@ import {
   TextMessage,
 } from '@line/bot-sdk';
 import { constant } from './constant';
-import { IAppAnswer, IAppQuestion } from './types';
+import { IAnswer, IQuestion } from './types';
 
 export const createMenu = (app_id: string) => {
   const richmenu: RichMenu = {
@@ -36,7 +36,7 @@ export const createMenu = (app_id: string) => {
   return richmenu;
 }
 
-export const quickReply = (question: IAppQuestion, title: string) => {
+export const quickReply = (question: IQuestion, title: string) => {
   const response: Message = {
     "type": "text", // ①
     "text": title,
@@ -48,7 +48,7 @@ export const quickReply = (question: IAppQuestion, title: string) => {
   return response
 }
 
-export const getButton = (question: IAppQuestion, answer: IAppAnswer) => {
+export const getButton = (question: IQuestion, answer: IAnswer) => {
 
   return {
     'type': 'action',
@@ -62,7 +62,7 @@ export const getButton = (question: IAppQuestion, answer: IAppAnswer) => {
   }
 }
 
-export const getAnswerButtons = (question: IAppQuestion) => {
+export const getAnswerButtons = (question: IQuestion) => {
 
   let answers: any[] = []
 
