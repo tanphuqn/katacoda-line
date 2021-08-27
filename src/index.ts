@@ -123,7 +123,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         if (event.type !== 'message') {
             // Create a new message.
             const profile: Profile = await client.getProfile(event.source.userId ?? '')
-            messages = messages.concat(startQuickReply(APP_ID, profile))
+            messages = messages.concat(startQuickReply(APP_ID, "", profile))
         }
     }
 
