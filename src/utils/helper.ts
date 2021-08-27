@@ -95,7 +95,7 @@ export const getGroupPostbackButton = (group: IGroup) => {
     'action': {
       'type': 'postback',
       'label': group.title ?? '',
-      'data': `app_id=${group.app_id}&group_id=${group._id}&event_type=${constant.event_type.welcome}`,
+      'data': `app_id=${group.app_id}&group_id=${group._id}&event_type=${constant.event_type.start}`,
       'text': group.title ?? '',
     },
   }
