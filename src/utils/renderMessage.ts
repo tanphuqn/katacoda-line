@@ -61,13 +61,13 @@ export default class RenderMessage {
         return messages
     }
 
-
     public getGoal(goal: IGoal) {
         let messages: Message[] = []
 
         const details = goal.details
         const columns = []
         details?.forEach(element => {
+            console.log("element", element)
             if (element.type == constant.goal_detail_type.message) {
                 messages.push(getTextMessage(element.message ?? ''))
             }
@@ -111,6 +111,7 @@ export default class RenderMessage {
         // }
 
         // messages.push(message)
+        console.log("messages", messages)
         return messages
     }
 }

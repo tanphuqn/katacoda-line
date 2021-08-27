@@ -2,7 +2,7 @@
 export interface IEndPoint {
   next_question: IQuestion
   next_groups: IGroup
-  goals: IGoal
+  goal: IGoal
 }
 
 export interface IQuestionPayload {

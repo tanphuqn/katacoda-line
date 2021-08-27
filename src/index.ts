@@ -90,7 +90,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
                 }
 
                 // Reply to the user.
-                const goalMessages = render.getGoal(endPoint.goals)
+                const goalMessages = render.getGoal(endPoint.goal)
                 if (goalMessages && goalMessages.length > 0) {
                     messages = messages.concat(goalMessages);
                 }
