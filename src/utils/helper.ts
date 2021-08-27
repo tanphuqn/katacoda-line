@@ -46,6 +46,7 @@ export const getQuestionQuickReply = (question: IQuestion, title: string) => {
     buttons.push(getAnswerPostbackButton(question, answer))
   });
 
+  buttons.push(getDefaultStartButton(question.app_id ?? "", question.group_id ? ""))
   const response: Message = {
     "type": "text", // ①
     "text": title,
@@ -71,12 +72,13 @@ export const getAnswerPostbackButton = (question: IQuestion, answer: IAnswer) =>
   return item
 }
 
-export const getGroupQuickReply = (nextGroup: INextGroup) => {
+export const getGroupQuickReply = (app_id: string, nextGroup: INextGroup) => {
   let buttons: QuickReplyItem[] = []
   nextGroup.groups?.forEach(group => {
     buttons.push(getGroupPostbackButton(group))
   });
 
+  buttons.push(getDefaultStartButton(app_id, ""))
   const response: Message = {
     "type": "text", // ①
     "text": nextGroup.title ?? '',
