@@ -64,7 +64,7 @@ export default class RenderMessage {
     public getGoal(goal: IGoal) {
         let messages: Message[] = []
         const details = goal.details
-
+        console.log("details", details)
         details?.forEach(element => {
             console.log("element", element)
             // if (element.type == constant.goal_detail_type.message) {
