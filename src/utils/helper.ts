@@ -102,6 +102,20 @@ export const getGroupPostbackButton = (group: IGroup) => {
   return item
 }
 
+export const getDefaultStartButton = (app_id: string, group_id: string) => {
+  const item: QuickReplyItem = {
+    'type': 'action',
+    // "imageUrl": "https://example.com/sushi.png",
+    'action': {
+      'type': 'postback',
+      'label': '👉診断スタート',
+      'data': `app_id=${app_id}&group_id=${group_id}&event_type=${constant.event_type.start}`,
+      'text': '👉診断スタート',
+    },
+  }
+
+  return item
+}
 
 export const startQuickReply = (app_id: string, group_id: string, profile: Profile) => {
   const messages: Message[] = []
