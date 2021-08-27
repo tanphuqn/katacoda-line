@@ -83,24 +83,25 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
             console.log("IAppQuestion", question)
             // Finall survery, go to Goal and Next group
             if (question == null) {
-                // Get message of next groups
-                if (endPoint.next_group && endPoint.next_group.groups && endPoint.next_group.groups.length > 0) {
-                    messages.push(render.getNextGroups(endPoint.next_group))
-                }
 
                 // Reply to the user.
                 const goalMessages = render.getGoal(endPoint.goal)
                 if (goalMessages && goalMessages.length > 0) {
                     messages = messages.concat(goalMessages);
                 }
-
-                // Final question
-                const message: TextMessage = {
-                    type: 'text',
-                    text: "Thank you so much"
-                };
-                // Reply to the user.
-                messages.push(message)
+                // Get message of next groups
+                if (endPoint.next_group && endPoint.next_group.groups && endPoint.next_group.groups.length > 0) {
+                    messages.push(render.getNextGroups(endPoint.next_group))
+                }
+                else {
+                    // Final question
+                    const message: TextMessage = {
+                        type: 'text',
+                        text: "Thank you so much"
+                    };
+                    // Reply to the user.
+                    messages.push(message)
+                }
             }
             else {
                 // Next question
