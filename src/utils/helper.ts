@@ -107,12 +107,26 @@ export const startQuickReply = (app_id: string, profile: Profile) => {
 }
 
 export const getTemplateImageColumn = (image: IGoalDetailImageType) => {
-  const column: TemplateImageColumn = {
-    "imageUrl": image.image_url ?? "",
-    "action": {
-      "type": "uri",
-      "label": "View detail",
-      "uri": image.click_url ?? ""
+  let column: TemplateImageColumn
+
+  if (image.click_url) {
+    column = {
+      "imageUrl": image.image_url ?? "",
+      "action": {
+        "type": "uri",
+        "label": "View detail",
+        "uri": image.click_url ?? ""
+      }
+    }
+  }
+  else {
+    column = {
+      "imageUrl": image.image_url ?? "",
+      "action": {
+        "type": "message",
+        "label": "Yes",
+        "text": "yes"
+      }
     }
   }
 
