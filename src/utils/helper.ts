@@ -42,11 +42,10 @@ export const createMenu = (app_id: string) => {
 export const getQuestionQuickReply = (question: IQuestion, title: string) => {
   let buttons: QuickReplyItem[] = []
 
+  buttons.push(getDefaultStartButton(question.app_id ?? "", question.group_id ?? ""))
   question.answers?.forEach(answer => {
     buttons.push(getAnswerPostbackButton(question, answer))
   });
-
-  buttons.push(getDefaultStartButton(question.app_id ?? "", question.group_id ?? ""))
   const response: Message = {
     "type": "text", // ①
     "text": title,
@@ -74,11 +73,10 @@ export const getAnswerPostbackButton = (question: IQuestion, answer: IAnswer) =>
 
 export const getGroupQuickReply = (app_id: string, nextGroup: INextGroup) => {
   let buttons: QuickReplyItem[] = []
+  buttons.push(getDefaultStartButton(app_id, ""))
   nextGroup.groups?.forEach(group => {
     buttons.push(getGroupPostbackButton(group))
   });
-
-  buttons.push(getDefaultStartButton(app_id, ""))
   const response: Message = {
     "type": "text", // ①
     "text": nextGroup.title ?? '',
