@@ -112,7 +112,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         else if (event_type === constant.event_type.welcome) {
             // Create a new message.
             const profile: Profile = await client.getProfile(event.source.userId ?? '')
-            messages = messages.concat(startQuickReply(APP_ID, profile))
+            messages = messages.concat(startQuickReply(APP_ID, group_id, profile))
         }
         else {
             // TODO

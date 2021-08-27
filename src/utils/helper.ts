@@ -103,7 +103,7 @@ export const getGroupPostbackButton = (group: IGroup) => {
 }
 
 
-export const startQuickReply = (app_id: string, profile: Profile) => {
+export const startQuickReply = (app_id: string, group_id: string, profile: Profile) => {
   const messages: Message[] = []
 
   messages.push(getTextMessage(`Welcome to my channel`))
@@ -119,7 +119,7 @@ export const startQuickReply = (app_id: string, profile: Profile) => {
           'action': {
             'type': 'postback',
             'label': '👉診断スタート',
-            'data': `app_id=${app_id}&event_type=${constant.event_type.start}`,
+            'data': `app_id=${app_id}&group_id=${group_id}&event_type=${constant.event_type.start}`,
             'text': '👉診断スタート',
           },
         }
