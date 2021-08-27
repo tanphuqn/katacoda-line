@@ -63,17 +63,16 @@ export default class RenderMessage {
 
     public getGoal(goal: IGoal) {
         let messages: Message[] = []
-
         const details = goal.details
-        const columns = []
+
         details?.forEach(element => {
             console.log("element", element)
-            if (element.type == constant.goal_detail_type.message) {
-                messages.push(getTextMessage(element.message ?? ''))
-            }
-            else {
-                messages.push(getImageCarousel(goal, element.images ?? []))
-            }
+            // if (element.type == constant.goal_detail_type.message) {
+            //     messages.push(getTextMessage(element.message ?? ''))
+            // }
+            // else {
+            //     messages.push(getImageCarousel(goal, element.images ?? []))
+            // }
         });
 
         // const message: Message = {
