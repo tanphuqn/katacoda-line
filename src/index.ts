@@ -84,9 +84,8 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
             // Finall survery, go to Goal and Next group
             if (question == null) {
                 // Get message of next groups
-                const groupMessages = render.getNextGroups(endPoint.next_groups)
-                if (groupMessages && groupMessages.length > 0) {
-                    messages = messages.concat(groupMessages);
+                if (endPoint.next_group && endPoint.next_group.groups && endPoint.next_group.groups.length > 0) {
+                    messages.push(render.getNextGroups(endPoint.next_group))
                 }
 
                 // Reply to the user.

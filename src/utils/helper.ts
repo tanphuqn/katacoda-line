@@ -1,13 +1,15 @@
 // Import all dependencies, mostly using destructuring for better view.
 import {
   Message,
+  PostbackAction,
   Profile,
+  QuickReplyItem,
   RichMenu,
   TemplateImageColumn,
   TextMessage,
 } from '@line/bot-sdk';
 import { constant } from './constant';
-import { IAnswer, IGoal, IGoalDetail, IGoalDetailImageType, IQuestion } from './types';
+import { IAnswer, IGoal, IGoalDetail, IGoalDetailImageType, IGroup, INextGroup, IQuestion } from './types';
 
 export const createMenu = (app_id: string) => {
   const richmenu: RichMenu = {
@@ -37,21 +39,26 @@ export const createMenu = (app_id: string) => {
   return richmenu;
 }
 
-export const quickReply = (question: IQuestion, title: string) => {
+export const getQuestionQuickReply = (question: IQuestion, title: string) => {
+  let buttons: QuickReplyItem[] = []
+
+  question.answers?.forEach(answer => {
+    buttons.push(getAnswerPostbackButton(question, answer))
+  });
+
   const response: Message = {
     "type": "text", // ①
     "text": title,
     "quickReply": { // ②
-      "items": getAnswerButtons(question),
+      "items": buttons,
     }
   }
 
   return response
 }
 
-export const getButton = (question: IQuestion, answer: IAnswer) => {
-
-  return {
+export const getAnswerPostbackButton = (question: IQuestion, answer: IAnswer) => {
+  const item: QuickReplyItem = {
     'type': 'action',
     "imageUrl": answer.image_url,
     'action': {
@@ -61,28 +68,45 @@ export const getButton = (question: IQuestion, answer: IAnswer) => {
       'text': answer.title ?? '',
     },
   }
+  return item
 }
 
-export const getAnswerButtons = (question: IQuestion) => {
-
-  let answers: any[] = []
-
-  question.answers?.forEach(answer => {
-    answers.push(getButton(question, answer))
+export const getGroupQuickReply = (nextGroup: INextGroup) => {
+  let buttons: QuickReplyItem[] = []
+  nextGroup.groups?.forEach(group => {
+    buttons.push(getGroupPostbackButton(group))
   });
 
-  return answers
+  const response: Message = {
+    "type": "text", // ①
+    "text": nextGroup.title ?? '',
+    "quickReply": { // ②
+      "items": buttons,
+    }
+  }
+
+  return response
 }
+
+export const getGroupPostbackButton = (group: IGroup) => {
+  const item: QuickReplyItem = {
+    'type': 'action',
+    // "imageUrl": group.image_url,
+    'action': {
+      'type': 'postback',
+      'label': group.title ?? '',
+      'data': `app_id=${group.app_id}&group_id=${group._id}&event_type=${constant.event_type.welcome}`,
+      'text': group.title ?? '',
+    },
+  }
+  return item
+}
+
 
 export const startQuickReply = (app_id: string, profile: Profile) => {
   const messages: Message[] = []
 
-  const text1: TextMessage = {
-    "type": "text", // ①
-    "text": `Welcome to my channel`,
-  }
-
-  messages.push(text1)
+  messages.push(getTextMessage(`Welcome to my channel`))
 
   const quickReply: Message = {
     "type": "text", // ①

@@ -1,7 +1,7 @@
 
 export interface IEndPoint {
   next_question: IQuestion
-  next_groups: IGroup
+  next_group: INextGroup
   goal: IGoal
 }
 
@@ -60,6 +60,12 @@ export interface IQuestion {
   created_at?: string
   updated_at?: string
 }
+
+export interface INextGroup {
+  title?: string
+  groups: IGroup[]
+}
+
 
 export interface IGroup {
   _id?: string

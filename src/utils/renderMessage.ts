@@ -1,8 +1,8 @@
 import { Client, Message, TextMessage } from "@line/bot-sdk";
 import * as fs from "fs";
 import { constant } from "./constant";
-import { createMenu, quickReply, startQuickReply, getTextMessage, getImageCarousel } from './helper';
-import { IGoal, IGroup, IMessage, IQuestion } from "./types";
+import { createMenu, getQuestionQuickReply, startQuickReply, getGroupQuickReply, getTextMessage, getImageCarousel } from './helper';
+import { IGoal, IGroup, IMessage, INextGroup, IQuestion } from "./types";
 
 export default class RenderMessage {
     private client: Client;
@@ -50,15 +50,14 @@ export default class RenderMessage {
         }
 
         // Create a quick replies message.
-        const message: Message = quickReply(question, title)
+        const message: Message = getQuestionQuickReply(question, title)
         messages.push(message)
 
         return messages
     }
 
-    public getNextGroups(nextGroups: IGroup) {
-        let messages: Message[] = []
-        return messages
+    public getNextGroups(nextGroup: INextGroup) {
+        return getGroupQuickReply(nextGroup)
     }
 
     public getGoal(goal: IGoal) {
