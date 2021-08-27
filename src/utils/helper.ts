@@ -119,7 +119,7 @@ export const startQuickReply = (app_id: string, group_id: string, profile: Profi
           'action': {
             'type': 'postback',
             'label': '👉診断スタート',
-            'data': `app_id=${app_id}&group_id=${group_id}&event_type=${constant.event_type.welcome}`,
+            'data': `app_id=${app_id}&group_id=${group_id}&event_type=${constant.event_type.start}`,
             'text': '👉診断スタート',
           },
         }
