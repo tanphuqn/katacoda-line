@@ -3,10 +3,11 @@ import {
   Message,
   Profile,
   RichMenu,
+  TemplateImageColumn,
   TextMessage,
 } from '@line/bot-sdk';
 import { constant } from './constant';
-import { IAnswer, IQuestion } from './types';
+import { IAnswer, IGoal, IGoalDetail, IGoalDetailImageType, IQuestion } from './types';
 
 export const createMenu = (app_id: string) => {
   const richmenu: RichMenu = {
@@ -103,6 +104,48 @@ export const startQuickReply = (app_id: string, profile: Profile) => {
   }
   messages.push(quickReply)
   return messages
+}
+
+export const getTemplateImageColumn = (image: IGoalDetailImageType) => {
+  const column: TemplateImageColumn = {
+    "imageUrl": image.image_url ?? "",
+    "action": {
+      "type": "uri",
+      "label": "View detail",
+      "uri": image.click_url ?? ""
+    }
+  }
+
+  return column
+}
+
+export const getImageCarousel = (goal: IGoal, images: IGoalDetailImageType[]) => {
+  const columns: TemplateImageColumn[] = []
+  images?.forEach(element => {
+    const column = getTemplateImageColumn(element)
+    columns.push(column)
+  });
+
+  const message: Message = {
+    "type": "template",
+    "altText": goal.title ?? '',
+    "template": {
+      "type": "image_carousel",
+      "columns": columns
+    }
+  }
+
+  return message
+}
+
+export const getTextMessage = (title: string) => {
+  // Final question
+  const message: TextMessage = {
+    type: 'text',
+    text: title
+  };
+
+  return message
 }
 
 

@@ -6,4 +6,9 @@ export const constant = {
     start: 'start',
     answer: 'answer',
   },
+
+  goal_detail_type: {
+    message: 'message',
+    image: 'image',
+  },
 };

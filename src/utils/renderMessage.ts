@@ -1,6 +1,7 @@
 import { Client, Message, TextMessage } from "@line/bot-sdk";
 import * as fs from "fs";
-import { createMenu, quickReply, startQuickReply } from './helper';
+import { constant } from "./constant";
+import { createMenu, quickReply, startQuickReply, getTextMessage, getImageCarousel } from './helper';
 import { IGoal, IGroup, IMessage, IQuestion } from "./types";
 
 export default class RenderMessage {
@@ -60,43 +61,56 @@ export default class RenderMessage {
         return messages
     }
 
-    public getGoals(goals: IGoal) {
-        let messages: Message[] = []
-        const message: Message = {
-            "type": "template",
-            "altText": "this is a image carousel template",
-            "template": {
-                "type": "image_carousel",
-                "columns": [
-                    {
-                        "imageUrl": "https://example.com/bot/images/item1.jpg",
-                        "action": {
-                            "type": "postback",
-                            "label": "Buy",
-                            "data": "action=buy&itemid=111"
-                        }
-                    },
-                    {
-                        "imageUrl": "https://example.com/bot/images/item2.jpg",
-                        "action": {
-                            "type": "message",
-                            "label": "Yes",
-                            "text": "yes"
-                        }
-                    },
-                    {
-                        "imageUrl": "https://example.com/bot/images/item3.jpg",
-                        "action": {
-                            "type": "uri",
-                            "label": "View detail",
-                            "uri": "http://example.com/page/222"
-                        }
-                    }
-                ]
-            }
-        }
 
-        messages.push(message)
+    public getGoal(goal: IGoal) {
+        let messages: Message[] = []
+
+        const details = goal.details
+        const columns = []
+        details?.forEach(element => {
+            if (element.type == constant.goal_detail_type.message) {
+                messages.push(getTextMessage(element.message ?? ''))
+            }
+            else {
+                messages.push(getImageCarousel(goal, element.images ?? []))
+            }
+        });
+
+        // const message: Message = {
+        //     "type": "template",
+        //     "altText": goals.title ?? '',
+        //     "template": {
+        //         "type": "image_carousel",
+        //         "columns": [
+        //             {
+        //                 "imageUrl": "https://example.com/bot/images/item1.jpg",
+        //                 "action": {
+        //                     "type": "postback",
+        //                     "label": "Buy",
+        //                     "data": "action=buy&itemid=111"
+        //                 }
+        //             },
+        //             {
+        //                 "imageUrl": "https://example.com/bot/images/item2.jpg",
+        //                 "action": {
+        //                     "type": "message",
+        //                     "label": "Yes",
+        //                     "text": "yes"
+        //                 }
+        //             },
+        //             {
+        //                 "imageUrl": "https://example.com/bot/images/item3.jpg",
+        //                 "action": {
+        //                     "type": "uri",
+        //                     "label": "View detail",
+        //                     "uri": "http://example.com/page/222"
+        //                 }
+        //             }
+        //         ]
+        //     }
+        // }
+
+        // messages.push(message)
         return messages
     }
 }
