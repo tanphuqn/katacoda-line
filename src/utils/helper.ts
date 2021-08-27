@@ -95,7 +95,7 @@ export const getGroupPostbackButton = (group: IGroup) => {
     'action': {
       'type': 'postback',
       'label': group.title ?? '',
-      'data': `app_id=${group.app_id}&group_id=${group._id}&event_type=${constant.event_type.start}`,
+      'data': `app_id=${group.app_id}&group_id=${group._id}&event_type=${constant.event_type.welcome}`,
       'text': group.title ?? '',
     },
   }
@@ -119,7 +119,7 @@ export const startQuickReply = (app_id: string, group_id: string, profile: Profi
           'action': {
             'type': 'postback',
             'label': '👉診断スタート',
-            'data': `app_id=${app_id}&group_id=${group_id}&event_type=${constant.event_type.start}`,
+            'data': `app_id=${app_id}&group_id=${group_id}&event_type=${constant.event_type.welcome}`,
             'text': '👉診断スタート',
           },
         }
