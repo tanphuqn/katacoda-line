@@ -151,7 +151,7 @@ export const getTemplateImageColumn = (image: IGoalDetailImageType) => {
       "imageUrl": image.image_url ?? "",
       "action": {
         "type": "uri",
-        "label": "View detail",
+        // "label": "View detail",
         "uri": image.click_url ?? ""
       }
     }
@@ -161,7 +161,7 @@ export const getTemplateImageColumn = (image: IGoalDetailImageType) => {
       "imageUrl": image.image_url ?? "",
       "action": {
         "type": "message",
-        "label": "Yes",
+        // "label": "Yes",
         "text": "yes"
       }
     }
