@@ -162,7 +162,7 @@ export const getTemplateImageColumn = (image: IGoalDetailImageType) => {
       "action": {
         "type": "message",
         // "label": "Yes",
-        "text": "yes"
+        "text": " "
       }
     }
   }
