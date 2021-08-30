@@ -1,7 +1,7 @@
 import { Client, Message, TextMessage } from "@line/bot-sdk";
 import * as fs from "fs";
 import { constant } from "./constant";
-import { createMenu, getQuestionQuickReply, getGroupQuickReply, getTextMessage, getImageCarousel } from './helper';
+import { getQuestionQuickReply, getGroupQuickReply, getTextMessage, getImageCarousel } from './helper';
 import { IGoal, IMessage, INextGroup, IQuestion } from "./types";
 
 export default class RenderMessage {
@@ -11,15 +11,6 @@ export default class RenderMessage {
     constructor(configs: { client: Client, app_id: string }) {
         this.client = configs.client;
         this.app_id = configs.app_id;
-    }
-
-    public async createRichMenu() {
-        const richMenuId = await this.client.createRichMenu(createMenu(this.app_id))
-        console.log("richMenuId", richMenuId)
-        await this.client.setRichMenuImage(richMenuId, fs.createReadStream('./richmenu.jpeg'))
-        await this.client.setDefaultRichMenu(richMenuId)
-
-        console.log("createRichMenu end")
     }
 
     public getNextQuestion(question: IQuestion) {
@@ -74,41 +65,6 @@ export default class RenderMessage {
             }
         });
 
-        // const message: Message = {
-        //     "type": "template",
-        //     "altText": goals.title ?? '',
-        //     "template": {
-        //         "type": "image_carousel",
-        //         "columns": [
-        //             {
-        //                 "imageUrl": "https://example.com/bot/images/item1.jpg",
-        //                 "action": {
-        //                     "type": "postback",
-        //                     "label": "Buy",
-        //                     "data": "action=buy&itemid=111"
-        //                 }
-        //             },
-        //             {
-        //                 "imageUrl": "https://example.com/bot/images/item2.jpg",
-        //                 "action": {
-        //                     "type": "message",
-        //                     "label": "Yes",
-        //                     "text": "yes"
-        //                 }
-        //             },
-        //             {
-        //                 "imageUrl": "https://example.com/bot/images/item3.jpg",
-        //                 "action": {
-        //                     "type": "uri",
-        //                     "label": "View detail",
-        //                     "uri": "http://example.com/page/222"
-        //                 }
-        //             }
-        //         ]
-        //     }
-        // }
-
-        // messages.push(message)
         console.log("messages", messages)
         return messages
     }

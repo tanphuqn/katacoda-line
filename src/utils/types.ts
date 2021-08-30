@@ -7,8 +7,10 @@ export interface IEndPoint {
 
 export interface IQuestionPayload {
   app_id?: string
-  question_id?: string
+  user_id?: string
+  next_question_id?: string
   group_id?: string
+  question_id?: string
   answer_id?: string
 }
 export interface IUser {

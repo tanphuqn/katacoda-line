@@ -34,8 +34,6 @@ const client = new Client(clientConfig);
 const app: Application = express();
 const render = new RenderMessage({ client: client, app_id: APP_ID });
 
-// render.createRichMenu();
-
 // Function handler to receive the text.
 const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponseBase | undefined> => {
     console.log("event", event);
@@ -51,19 +49,17 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
     // Process all message related variables here.
     const { replyToken } = event;
     // Load question from api
-    let group_id = ''
-    let question_id = ''
-    let answer_id = ''
-    let event_type = ''
     let messages: Message[] = []
     let title = ''
     if (event.type === 'postback') {
         const data = event.postback.data
         let params = new URLSearchParams(data);
-        group_id = params.get("group_id") || '';
-        question_id = params.get("question_id") || '';
-        answer_id = params.get("answer_id") || '';
-        event_type = params.get("event_type") || '';
+        const group_id = params.get("group_id") || '';
+        const question_id = params.get("question_id") || '';
+        const next_question_id = params.get("next_question_id") || '';
+        const answer_id = params.get("answer_id") || '';
+        const event_type = params.get("event_type") || '';
+
         // Check the end survey
         if (params.get("app_id") === '') {
             // TODO the sumarry survey
@@ -72,16 +68,19 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
 
         if (event_type === constant.event_type.answer || event_type === constant.event_type.start) {
             const endPoint: IEndPoint = await appQuestionApi.single({
-                app_id: APP_ID, question_id: question_id,
-                group_id: group_id, answer_id: answer_id
+                app_id: APP_ID,
+                user_id: event.source.userId ?? '',
+                next_question_id: next_question_id,
+                group_id: group_id,
+                answer_id: answer_id,
+                question_id: question_id
             })
             console.log("IAppEndPoint", endPoint)
             const question: IQuestion = endPoint.next_question
             console.log("IAppQuestion", question)
             // Finall survery, go to Goal and Next group
             if (question == null) {
-
-                // Reply to the user.
+                // Get message of Goal
                 const goalMessages = render.getGoal(endPoint.goal)
                 if (goalMessages && goalMessages.length > 0) {
                     messages = messages.concat(goalMessages);

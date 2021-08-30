@@ -10,34 +10,6 @@ import {
 import { constant } from './constant';
 import { IAnswer, IGoal, IGoalDetailImageType, IGroup, INextGroup, IQuestion } from './types';
 
-export const createMenu = (app_id: string) => {
-  const richmenu: RichMenu = {
-    "size": {
-      "width": 2500,
-      "height": 1686
-    },
-    "selected": false,
-    "name": "Nice richmenu",
-    "chatBarText": "Tap to open",
-    "areas": [
-      {
-        "bounds": {
-          "x": 0,
-          "y": 0,
-          "width": 2500,
-          "height": 1686
-        },
-        "action": {
-          "type": "postback",
-          'data': `app_id=${app_id}&event_type=${constant.event_type.welcome}`,
-        }
-      }
-    ]
-  };
-
-  return richmenu;
-}
-
 export const getQuestionQuickReply = (question: IQuestion, title: string) => {
   let buttons: QuickReplyItem[] = []
 
@@ -63,7 +35,7 @@ export const getAnswerPostbackButton = (question: IQuestion, answer: IAnswer) =>
     'action': {
       'type': 'postback',
       'label': answer.title ?? '',
-      'data': `app_id=${question.app_id}&group_id=${question.group_id}&question_id=${answer.next_question_id}&answer_id=${answer._id}&event_type=${constant.event_type.answer}`,
+      'data': `app_id=${question.app_id}&group_id=${question.group_id}&question_id=${question._id}&next_question_id=${answer.next_question_id}&answer_id=${answer._id}&event_type=${constant.event_type.answer}`,
       'text': answer.title ?? '',
     },
   }
@@ -90,7 +62,6 @@ export const getGroupQuickReply = (app_id: string, nextGroup: INextGroup) => {
 export const getGroupPostbackButton = (group: IGroup) => {
   const item: QuickReplyItem = {
     'type': 'action',
-    // "imageUrl": group.image_url,
     'action': {
       'type': 'postback',
       'label': group.title ?? '',
@@ -128,7 +99,6 @@ export const startQuickReply = (app_id: string, group_id: string, profile: Profi
       "items": [
         {
           'type': 'action',
-          // "imageUrl": "https://example.com/sushi.png",
           'action': {
             'type': 'postback',
             'label': '👉診断スタート',
@@ -151,7 +121,6 @@ export const getTemplateImageColumn = (image: IGoalDetailImageType) => {
       "imageUrl": image.image_url ?? "",
       "action": {
         "type": "uri",
-        // "label": "View detail",
         "uri": image.click_url ?? ""
       }
     }
@@ -161,7 +130,6 @@ export const getTemplateImageColumn = (image: IGoalDetailImageType) => {
       "imageUrl": image.image_url ?? "",
       "action": {
         "type": "message",
-        // "label": "Yes",
         "text": " "
       }
     }
