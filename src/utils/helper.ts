@@ -1,13 +1,12 @@
 // Import all dependencies, mostly using destructuring for better view.
 import {
   Message,
-  Profile,
   QuickReplyItem,
   TemplateImageColumn,
   TextMessage,
 } from '@line/bot-sdk';
 import { constant } from './constant';
-import { IAnswer, IGoal, IGoalDetailImageType, IGroup, INextGroup, IQuestion, ISetting } from './types';
+import { IAnswer, IGoal, IGoalDetailImageType, IGroup, INextGroup, IQuestion } from './types';
 
 export const getQuestionQuickReply = (question: IQuestion, title: string) => {
   let buttons: QuickReplyItem[] = []

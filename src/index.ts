@@ -9,7 +9,6 @@ import {
     TextMessage,
     MessageAPIResponseBase,
     Message,
-    Profile,
 } from '@line/bot-sdk';
 import express, { Application, Request, Response } from 'express';
 import appQuestionApi from './api/question'
