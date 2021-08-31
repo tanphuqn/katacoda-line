@@ -13,7 +13,6 @@ import {
 } from '@line/bot-sdk';
 import express, { Application, Request, Response } from 'express';
 import appQuestionApi from './api/question'
-import { startQuickReply } from './utils/helper';
 import { IQuestion, IEndPoint } from './utils/types';
 import { constant } from './utils/constant';
 import RenderMessage from './utils/renderMessage';
@@ -106,12 +105,9 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
                 // Next question
                 messages = messages.concat(render.getNextQuestion(question));
             }
-
         }
         else if (event_type === constant.event_type.welcome) {
-            // Create a new message.
-            const profile: Profile = await client.getProfile(event.source.userId ?? '')
-            messages = messages.concat(startQuickReply(APP_ID, group_id, profile))
+            messages = messages.concat(await render.getWelcome(APP_ID, group_id, event));
         }
         else {
             // TODO
@@ -120,9 +116,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
 
     } else {
         if (event.type !== 'message') {
-            // Create a new message.
-            const profile: Profile = await client.getProfile(event.source.userId ?? '')
-            messages = messages.concat(startQuickReply(APP_ID, "", profile))
+            messages = messages.concat(await render.getWelcome(APP_ID, "", event));
         }
     }
 

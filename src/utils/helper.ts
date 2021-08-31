@@ -3,12 +3,11 @@ import {
   Message,
   Profile,
   QuickReplyItem,
-  RichMenu,
   TemplateImageColumn,
   TextMessage,
 } from '@line/bot-sdk';
 import { constant } from './constant';
-import { IAnswer, IGoal, IGoalDetailImageType, IGroup, INextGroup, IQuestion } from './types';
+import { IAnswer, IGoal, IGoalDetailImageType, IGroup, INextGroup, IQuestion, ISetting } from './types';
 
 export const getQuestionQuickReply = (question: IQuestion, title: string) => {
   let buttons: QuickReplyItem[] = []
@@ -87,14 +86,10 @@ export const getDefaultStartButton = (app_id: string, group_id: string) => {
   return item
 }
 
-export const startQuickReply = (app_id: string, group_id: string, profile: Profile) => {
-  const messages: Message[] = []
-
-  messages.push(getTextMessage(`Welcome to my channel`))
-
+export const startQuickReply = (app_id: string, group_id: string, title: string) => {
   const quickReply: Message = {
     "type": "text", // ①
-    "text": "Let's go",
+    "text": title,
     "quickReply": { // ②
       "items": [
         {
@@ -109,8 +104,7 @@ export const startQuickReply = (app_id: string, group_id: string, profile: Profi
       ],
     }
   }
-  messages.push(quickReply)
-  return messages
+  return quickReply
 }
 
 export const getTemplateImageColumn = (image: IGoalDetailImageType) => {

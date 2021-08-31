@@ -25,6 +25,16 @@ export enum EDeployStatus {
   completed = 'completed',
 }
 
+export interface ISettingRequest {
+  app_id: string
+}
+
+export interface ISetting {
+  _id?: string
+  app_id?: string
+  welcomes?: string[]
+}
+
 export interface IApp {
   _id?: string
   name?: string

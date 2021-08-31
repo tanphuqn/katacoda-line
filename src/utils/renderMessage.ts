@@ -1,8 +1,9 @@
-import { Client, Message, TextMessage } from "@line/bot-sdk";
+import { Client, Message, Profile, TextMessage, WebhookEvent } from "@line/bot-sdk";
 import * as fs from "fs";
+import settingApi from '../api/setting'
 import { constant } from "./constant";
-import { getQuestionQuickReply, getGroupQuickReply, getTextMessage, getImageCarousel } from './helper';
-import { IGoal, IMessage, INextGroup, IQuestion } from "./types";
+import { getQuestionQuickReply, getGroupQuickReply, getTextMessage, getImageCarousel, startQuickReply } from './helper';
+import { IGoal, IMessage, INextGroup, IQuestion, ISetting } from "./types";
 
 export default class RenderMessage {
     private client: Client;
@@ -66,6 +67,42 @@ export default class RenderMessage {
         });
 
         console.log("messages", messages)
+        return messages
+    }
+
+    public async getWelcome(app_id: string, group_id: string, event: WebhookEvent) {
+        const setting: ISetting = await settingApi.single({ app_id: app_id })
+        const welcomes = setting.welcomes
+        let messages: Message[] = []
+        // Create a new message.
+        const profile: Profile = await this.client.getProfile(event.source.userId ?? '')
+        let title: string = ''
+        if (welcomes && welcomes?.length > 1) {
+            for (let index = 0; index < welcomes.length - 1; index++) {
+                const message: TextMessage = {
+                    type: 'text',
+                    text: welcomes[index]
+                };
+
+                // Reply to the user.
+                messages.push(message)
+            }
+
+            title = welcomes[welcomes.length - 1];
+        }
+        else {
+            if (welcomes && welcomes.length > 0) {
+                title = welcomes[0];
+            }
+
+        }
+
+        title = title.replace("{nickname}", profile.userId)
+        title = title.replace("{accountname}", profile.displayName)
+        // Create a quick replies message.
+        const message: Message = startQuickReply(app_id, group_id, title)
+        messages.push(message)
+
         return messages
     }
 }
