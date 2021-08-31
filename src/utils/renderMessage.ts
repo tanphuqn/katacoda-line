@@ -79,9 +79,12 @@ export default class RenderMessage {
         let title: string = ''
         if (welcomes && welcomes?.length > 1) {
             for (let index = 0; index < welcomes.length - 1; index++) {
+                let text = welcomes[index]
+                text = text.replace("{nickname}", profile.userId)
+                text = text.replace("{accountname}", profile.displayName)
                 const message: TextMessage = {
                     type: 'text',
-                    text: welcomes[index]
+                    text: text
                 };
 
                 // Reply to the user.
