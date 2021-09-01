@@ -28,11 +28,18 @@ export enum EDeployStatus {
 export interface ISettingRequest {
   app_id: string
 }
+export interface IInitQuickReply {
+  start_survey: string
+  is_start_survey: boolean
+  restart_survey: string
+  is_restart_survey: boolean
+}
 
 export interface ISetting {
   _id?: string
   app_id?: string
   welcomes?: string[]
+  init_quick_reply?: IInitQuickReply
 }
 
 export interface IApp {

@@ -14,7 +14,8 @@ export default class RenderMessage {
         this.app_id = configs.app_id;
     }
 
-    public getNextQuestion(question: IQuestion) {
+    public async getNextQuestion(question: IQuestion) {
+        const setting: ISetting = await settingApi.single({ app_id: this.app_id })
         let messages: Message[] = []
         let title: string = ''
         // Next question
@@ -42,14 +43,15 @@ export default class RenderMessage {
         }
 
         // Create a quick replies message.
-        const message: Message = getQuestionQuickReply(question, title)
+        const message: Message = getQuestionQuickReply(question, title, setting)
         messages.push(message)
 
         return messages
     }
 
-    public getNextGroups(app_id: string, nextGroup: INextGroup) {
-        return getGroupQuickReply(app_id, nextGroup)
+    public async getNextGroups(app_id: string, nextGroup: INextGroup) {
+        const setting: ISetting = await settingApi.single({ app_id: this.app_id })
+        return getGroupQuickReply(app_id, nextGroup, setting)
     }
 
     public getGoal(goal: IGoal) {
@@ -70,8 +72,8 @@ export default class RenderMessage {
         return messages
     }
 
-    public async getWelcome(app_id: string, group_id: string, event: WebhookEvent) {
-        const setting: ISetting = await settingApi.single({ app_id: app_id })
+    public async getWelcome(group_id: string, event: WebhookEvent) {
+        const setting: ISetting = await settingApi.single({ app_id: this.app_id })
         const welcomes = setting.welcomes
         let messages: Message[] = []
         // Create a new message.
@@ -103,7 +105,7 @@ export default class RenderMessage {
         title = title.replace("{displayName}", profile.displayName)
         title = title.replace("{userId}", profile.userId)
         // Create a quick replies message.
-        const message: Message = startQuickReply(app_id, group_id, title)
+        const message: Message = startQuickReply(this.app_id, group_id, title, setting)
         messages.push(message)
 
         return messages

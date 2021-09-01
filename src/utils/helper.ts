@@ -6,12 +6,24 @@ import {
   TextMessage,
 } from '@line/bot-sdk';
 import { constant } from './constant';
-import { IAnswer, IGoal, IGoalDetailImageType, IGroup, INextGroup, IQuestion } from './types';
+import { IAnswer, IGoal, IGoalDetailImageType, IGroup, IInitQuickReply, INextGroup, IQuestion, ISetting } from './types';
 
-export const getQuestionQuickReply = (question: IQuestion, title: string) => {
+export const getQuestionQuickReply = (question: IQuestion, title: string, setting: ISetting) => {
   let buttons: QuickReplyItem[] = []
+  let init_quick_reply: IInitQuickReply = setting.init_quick_reply ?? {
+    start_survey: "Start survey",
+    is_start_survey: true,
+    restart_survey: "Restart survey",
+    is_restart_survey: true
+  }
+  if (init_quick_reply.is_start_survey) {
+    buttons.push(getDefaultStartButton(question.app_id ?? "", question.group_id ?? "", init_quick_reply.start_survey))
+  }
 
-  buttons.push(getDefaultStartButton(question.app_id ?? "", question.group_id ?? ""))
+  if (init_quick_reply.is_restart_survey) {
+    buttons.push(getDefaultStartButton(question.app_id ?? "", question.group_id ?? "", init_quick_reply.restart_survey))
+  }
+
   question.answers?.forEach(answer => {
     buttons.push(getAnswerPostbackButton(question, answer))
   });
@@ -40,9 +52,22 @@ export const getAnswerPostbackButton = (question: IQuestion, answer: IAnswer) =>
   return item
 }
 
-export const getGroupQuickReply = (app_id: string, nextGroup: INextGroup) => {
+export const getGroupQuickReply = (app_id: string, nextGroup: INextGroup, setting: ISetting) => {
   let buttons: QuickReplyItem[] = []
-  buttons.push(getDefaultStartButton(app_id, ""))
+  let init_quick_reply: IInitQuickReply = setting.init_quick_reply ?? {
+    start_survey: "Start survey",
+    is_start_survey: true,
+    restart_survey: "Restart survey",
+    is_restart_survey: true
+  }
+  if (init_quick_reply.is_start_survey) {
+    buttons.push(getDefaultStartButton(app_id, "", init_quick_reply.start_survey))
+  }
+
+  if (init_quick_reply.is_restart_survey) {
+    buttons.push(getDefaultStartButton(app_id, "", init_quick_reply.restart_survey))
+  }
+
   nextGroup.groups?.forEach(group => {
     buttons.push(getGroupPostbackButton(group))
   });
@@ -70,40 +95,54 @@ export const getGroupPostbackButton = (group: IGroup) => {
   return item
 }
 
-export const getDefaultStartButton = (app_id: string, group_id: string) => {
+export const getDefaultStartButton = (app_id: string, group_id: string, title: string) => {
   const item: QuickReplyItem = {
     'type': 'action',
     // "imageUrl": "https://example.com/sushi.png",
     'action': {
       'type': 'postback',
-      'label': '👉診断スタート',
+      'label': title,
       'data': `app_id=${app_id}&group_id=${group_id}&event_type=${constant.event_type.start}`,
-      'text': '👉診断スタート',
+      'text': title,
     },
   }
 
   return item
 }
 
-export const startQuickReply = (app_id: string, group_id: string, title: string) => {
-  const quickReply: Message = {
-    "type": "text", // ①
-    "text": title,
-    "quickReply": { // ②
-      "items": [
-        {
-          'type': 'action',
-          'action': {
-            'type': 'postback',
-            'label': '👉診断スタート',
-            'data': `app_id=${app_id}&group_id=${group_id}&event_type=${constant.event_type.start}`,
-            'text': '👉診断スタート',
-          },
-        }
-      ],
+export const startQuickReply = (app_id: string, group_id: string, title: string, setting: ISetting) => {
+  let message: Message
+  const init_quick_reply: IInitQuickReply = setting.init_quick_reply ?? {
+    start_survey: "Start survey",
+    is_start_survey: true,
+    restart_survey: "Restart survey",
+    is_restart_survey: true
+  }
+
+  if (!init_quick_reply.is_start_survey) {
+    message = getTextMessage(title)
+  } else {
+
+    message = {
+      "type": "text", // ①
+      "text": title,
+      "quickReply": { // ②
+        "items": [
+          {
+            'type': 'action',
+            'action': {
+              'type': 'postback',
+              'label': init_quick_reply.start_survey,
+              'data': `app_id=${app_id}&group_id=${group_id}&event_type=${constant.event_type.start}`,
+              'text': init_quick_reply.start_survey,
+            },
+          }
+        ],
+      }
     }
   }
-  return quickReply
+
+  return message
 }
 
 export const getTemplateImageColumn = (image: IGoalDetailImageType) => {

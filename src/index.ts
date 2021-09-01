@@ -88,7 +88,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
                 }
                 // Get message of next groups
                 if (endPoint.next_group && endPoint.next_group.groups && endPoint.next_group.groups.length > 0) {
-                    messages.push(render.getNextGroups(APP_ID, endPoint.next_group))
+                    messages.push(await render.getNextGroups(APP_ID, endPoint.next_group))
                 }
                 else {
                     // Final question
@@ -102,11 +102,11 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
             }
             else {
                 // Next question
-                messages = messages.concat(render.getNextQuestion(question));
+                messages = messages.concat(await render.getNextQuestion(question));
             }
         }
         else if (event_type === constant.event_type.welcome) {
-            messages = messages.concat(await render.getWelcome(APP_ID, group_id, event));
+            messages = messages.concat(await render.getWelcome(group_id, event));
         }
         else {
             // TODO
@@ -115,7 +115,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
 
     } else {
         if (event.type !== 'message') {
-            messages = messages.concat(await render.getWelcome(APP_ID, "", event));
+            messages = messages.concat(await render.getWelcome("", event));
         }
     }
 
