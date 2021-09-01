@@ -16,9 +16,6 @@ export const getQuestionQuickReply = (question: IQuestion, title: string, settin
     restart_survey: "Restart survey",
     is_restart_survey: true
   }
-  if (init_quick_reply.is_start_survey) {
-    buttons.push(getDefaultStartButton(question.app_id ?? "", question.group_id ?? "", init_quick_reply.start_survey))
-  }
 
   if (init_quick_reply.is_restart_survey) {
     buttons.push(getDefaultStartButton(question.app_id ?? "", question.group_id ?? "", init_quick_reply.restart_survey))
@@ -60,13 +57,13 @@ export const getGroupQuickReply = (app_id: string, nextGroup: INextGroup, settin
     restart_survey: "Restart survey",
     is_restart_survey: true
   }
-  if (init_quick_reply.is_start_survey) {
-    buttons.push(getDefaultStartButton(app_id, "", init_quick_reply.start_survey))
-  }
+  // if (init_quick_reply.is_start_survey) {
+  //   buttons.push(getDefaultStartButton(app_id, "", init_quick_reply.start_survey))
+  // }
 
-  if (init_quick_reply.is_restart_survey) {
-    buttons.push(getDefaultStartButton(app_id, "", init_quick_reply.restart_survey))
-  }
+  // if (init_quick_reply.is_restart_survey) {
+  //   buttons.push(getDefaultStartButton(app_id, "", init_quick_reply.restart_survey))
+  // }
 
   nextGroup.groups?.forEach(group => {
     buttons.push(getGroupPostbackButton(group))
