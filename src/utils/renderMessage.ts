@@ -80,8 +80,8 @@ export default class RenderMessage {
         if (welcomes && welcomes?.length > 1) {
             for (let index = 0; index < welcomes.length - 1; index++) {
                 let text = welcomes[index]
-                text = text.replace("{displayName}", profile.userId)
-                text = text.replace("{userId}", profile.displayName)
+                text = text.replace("{displayName}", profile.displayName)
+                text = text.replace("{userId}", profile.userId)
                 const message: TextMessage = {
                     type: 'text',
                     text: text
@@ -100,8 +100,8 @@ export default class RenderMessage {
 
         }
 
-        title = title.replace("{displayName}", profile.userId)
-        title = title.replace("{userId}", profile.displayName)
+        title = title.replace("{displayName}", profile.displayName)
+        title = title.replace("{userId}", profile.userId)
         // Create a quick replies message.
         const message: Message = startQuickReply(app_id, group_id, title)
         messages.push(message)
