@@ -22,7 +22,7 @@ export const getQuestionQuickReply = (question: IQuestion, survey_id: string, ti
   }
 
   question.answers?.forEach(answer => {
-    buttons.push(getAnswerPostbackButton(question, answer))
+    buttons.push(getAnswerPostbackButton(survey_id, question, answer))
   });
   const response: Message = {
     "type": "text", // ①
@@ -35,14 +35,14 @@ export const getQuestionQuickReply = (question: IQuestion, survey_id: string, ti
   return response
 }
 
-export const getAnswerPostbackButton = (question: IQuestion, answer: IAnswer) => {
+export const getAnswerPostbackButton = (survey_id: string, question: IQuestion, answer: IAnswer) => {
   const item: QuickReplyItem = {
     'type': 'action',
     "imageUrl": answer.image_url,
     'action': {
       'type': 'postback',
       'label': answer.title ?? '',
-      'data': `app_id=${question.app_id}&group_id=${question.group_id}&question_id=${question._id}&next_question_id=${answer.next_question_id}&answer_id=${answer._id}&answer_label=${answer.label}&event_type=${constant.event_type.answer}`,
+      'data': `app_id=${question.app_id}&group_id=${question.group_id}&question_id=${question._id}&next_question_id=${answer.next_question_id}&answer_id=${answer._id}&answer_label=${answer.label}&survey_id=${survey_id}&event_type=${constant.event_type.answer}`,
       'text': answer.title ?? '',
     },
   }
@@ -57,13 +57,6 @@ export const getGroupQuickReply = (app_id: string, nextGroup: INextGroup, settin
     restart_survey: "Restart survey",
     is_restart_survey: true
   }
-  // if (init_quick_reply.is_start_survey) {
-  //   buttons.push(getDefaultStartButton(app_id, "", init_quick_reply.start_survey))
-  // }
-
-  // if (init_quick_reply.is_restart_survey) {
-  //   buttons.push(getDefaultStartButton(app_id, "", init_quick_reply.restart_survey))
-  // }
 
   nextGroup.groups?.forEach(group => {
     buttons.push(getGroupPostbackButton(group))
