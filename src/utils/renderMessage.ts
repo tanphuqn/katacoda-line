@@ -14,7 +14,7 @@ export default class RenderMessage {
         this.app_id = configs.app_id;
     }
 
-    public async getNextQuestion(question: IQuestion) {
+    public async getNextQuestion(survey_id: string, question: IQuestion) {
         const setting: ISetting = await settingApi.single({ app_id: this.app_id })
         let messages: Message[] = []
         let title: string = ''
@@ -43,7 +43,7 @@ export default class RenderMessage {
         }
 
         // Create a quick replies message.
-        const message: Message = getQuestionQuickReply(question, title, setting)
+        const message: Message = getQuestionQuickReply(question, survey_id, title, setting)
         messages.push(message)
 
         return messages
@@ -72,7 +72,7 @@ export default class RenderMessage {
         return messages
     }
 
-    public async getWelcome(group_id: string, event: WebhookEvent) {
+    public async getWelcome(group_id: string, survey_id: string, event: WebhookEvent) {
         const setting: ISetting = await settingApi.single({ app_id: this.app_id })
         const welcomes = setting.welcomes
         let messages: Message[] = []
@@ -105,7 +105,7 @@ export default class RenderMessage {
         title = title.replace("{displayName}", profile.displayName)
         title = title.replace("{userId}", profile.userId)
         // Create a quick replies message.
-        const message: Message = startQuickReply(this.app_id, group_id, title, setting)
+        const message: Message = startQuickReply(this.app_id, group_id, survey_id, title, setting)
         messages.push(message)
 
         return messages

@@ -12,6 +12,7 @@ export interface IQuestionPayload {
   group_id?: string
   question_id?: string
   answer_id?: string
+  survey_id?: string
 }
 export interface IUser {
   _id?: string
@@ -59,6 +60,7 @@ export interface IApp {
 export interface IAnswer {
   _id?: string
   title?: string
+  label?: string
   image_url: string
   next_question_id: string
 }

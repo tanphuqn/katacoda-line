@@ -10,6 +10,7 @@ import {
     MessageAPIResponseBase,
     Message,
 } from '@line/bot-sdk';
+import { v4 as uuidv4 } from 'uuid';
 import express, { Application, Request, Response } from 'express';
 import appQuestionApi from './api/question'
 import { IQuestion, IEndPoint } from './utils/types';
@@ -60,7 +61,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         const next_question_id = params.get("next_question_id") || '';
         const answer_id = params.get("answer_id") || '';
         const event_type = params.get("event_type") || '';
-
+        const survey_id = params.get("survey_id") || '';
         // Check the end survey
         if (params.get("app_id") === '') {
             // TODO the sumarry survey
@@ -74,7 +75,8 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
                 next_question_id: next_question_id,
                 group_id: group_id,
                 answer_id: answer_id,
-                question_id: question_id
+                question_id: question_id,
+                survey_id: survey_id
             })
             console.log("IAppEndPoint", endPoint)
             const question: IQuestion = endPoint.next_question
@@ -102,11 +104,12 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
             }
             else {
                 // Next question
-                messages = messages.concat(await render.getNextQuestion(question));
+                messages = messages.concat(await render.getNextQuestion(survey_id, question));
             }
         }
         else if (event_type === constant.event_type.welcome) {
-            messages = messages.concat(await render.getWelcome(group_id, event));
+            const survey_id = uuidv4();
+            messages = messages.concat(await render.getWelcome(group_id, survey_id, event));
         }
         else {
             // TODO
@@ -115,7 +118,8 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
 
     } else {
         if (event.type !== 'message') {
-            messages = messages.concat(await render.getWelcome("", event));
+            const survey_id = uuidv4();
+            messages = messages.concat(await render.getWelcome("", survey_id, event));
         }
     }
 

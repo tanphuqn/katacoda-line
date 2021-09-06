@@ -8,7 +8,7 @@ import {
 import { constant } from './constant';
 import { IAnswer, IGoal, IGoalDetailImageType, IGroup, IInitQuickReply, INextGroup, IQuestion, ISetting } from './types';
 
-export const getQuestionQuickReply = (question: IQuestion, title: string, setting: ISetting) => {
+export const getQuestionQuickReply = (question: IQuestion, survey_id: string, title: string, setting: ISetting) => {
   let buttons: QuickReplyItem[] = []
   let init_quick_reply: IInitQuickReply = setting.init_quick_reply ?? {
     start_survey: "Start survey",
@@ -18,7 +18,7 @@ export const getQuestionQuickReply = (question: IQuestion, title: string, settin
   }
 
   if (init_quick_reply.is_restart_survey) {
-    buttons.push(getDefaultStartButton(question.app_id ?? "", question.group_id ?? "", init_quick_reply.restart_survey))
+    buttons.push(getDefaultStartButton(question.app_id ?? "", question.group_id ?? "", survey_id, init_quick_reply.restart_survey))
   }
 
   question.answers?.forEach(answer => {
@@ -42,7 +42,13 @@ export const getAnswerPostbackButton = (question: IQuestion, answer: IAnswer) =>
     'action': {
       'type': 'postback',
       'label': answer.title ?? '',
-      'data': `app_id=${question.app_id}&group_id=${question.group_id}&question_id=${question._id}&next_question_id=${answer.next_question_id}&answer_id=${answer._id}&event_type=${constant.event_type.answer}`,
+      'data': `app_id=${question.app_id}
+              &group_id=${question.group_id}
+              &question_id=${question._id}
+              &next_question_id=${answer.next_question_id}
+              &answer_id=${answer._id}
+              &answer_label=${answer.label}
+              &event_type=${constant.event_type.answer}`,
       'text': answer.title ?? '',
     },
   }
@@ -92,14 +98,17 @@ export const getGroupPostbackButton = (group: IGroup) => {
   return item
 }
 
-export const getDefaultStartButton = (app_id: string, group_id: string, title: string) => {
+export const getDefaultStartButton = (app_id: string, group_id: string, survey_id: string, title: string) => {
   const item: QuickReplyItem = {
     'type': 'action',
     // "imageUrl": "https://example.com/sushi.png",
     'action': {
       'type': 'postback',
       'label': title,
-      'data': `app_id=${app_id}&group_id=${group_id}&event_type=${constant.event_type.start}`,
+      'data': `app_id=${app_id}
+              &group_id=${group_id}
+              &survey_id=${survey_id}
+              &event_type=${constant.event_type.start}`,
       'text': title,
     },
   }
@@ -107,7 +116,7 @@ export const getDefaultStartButton = (app_id: string, group_id: string, title: s
   return item
 }
 
-export const startQuickReply = (app_id: string, group_id: string, title: string, setting: ISetting) => {
+export const startQuickReply = (app_id: string, group_id: string, survey_id: string, title: string, setting: ISetting) => {
   let message: Message
   const init_quick_reply: IInitQuickReply = setting.init_quick_reply ?? {
     start_survey: "Start survey",
@@ -130,7 +139,10 @@ export const startQuickReply = (app_id: string, group_id: string, title: string,
             'action': {
               'type': 'postback',
               'label': init_quick_reply.start_survey,
-              'data': `app_id=${app_id}&group_id=${group_id}&event_type=${constant.event_type.start}`,
+              'data': `app_id=${app_id}
+                      &group_id=${group_id}
+                      &survey_id=${survey_id}
+                      &event_type=${constant.event_type.start}`,
               'text': init_quick_reply.start_survey,
             },
           }

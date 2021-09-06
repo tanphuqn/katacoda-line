@@ -2,3 +2,4 @@
 node_modules/
 # Built files.
 dist/
+package-lock.json
