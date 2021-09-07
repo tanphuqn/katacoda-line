@@ -2,8 +2,8 @@ import { Client, Message, Profile, TextMessage, WebhookEvent } from "@line/bot-s
 import * as fs from "fs";
 import settingApi from '../api/setting'
 import { constant } from "./constant";
-import { getQuestionQuickReply, getGroupQuickReply, getTextMessage, getImageCarousel, startQuickReply } from './helper';
-import { IGoal, IMessage, INextGroup, IQuestion, ISetting } from "./types";
+import { getQuestionQuickReply, getTextMessage, getImageCarousel, startQuickReply } from './helper';
+import { IGoal, IMessage, IQuestion, ISetting } from "./types";
 
 export default class RenderMessage {
     private client: Client;
@@ -47,11 +47,6 @@ export default class RenderMessage {
         messages.push(message)
 
         return messages
-    }
-
-    public async getNextGroups(app_id: string, nextGroup: INextGroup) {
-        const setting: ISetting = await settingApi.single({ app_id: this.app_id })
-        return getGroupQuickReply(app_id, nextGroup, setting)
     }
 
     public getGoal(goal: IGoal) {

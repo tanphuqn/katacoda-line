@@ -1,7 +1,6 @@
 
 export interface IEndPoint {
   next_question: IQuestion
-  next_group: INextGroup
   goal: IGoal
 }
 

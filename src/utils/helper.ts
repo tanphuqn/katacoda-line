@@ -49,42 +49,6 @@ export const getAnswerPostbackButton = (survey_id: string, question: IQuestion, 
   return item
 }
 
-export const getGroupQuickReply = (app_id: string, nextGroup: INextGroup, setting: ISetting) => {
-  let buttons: QuickReplyItem[] = []
-  let init_quick_reply: IInitQuickReply = setting.init_quick_reply ?? {
-    start_survey: "Start survey",
-    is_start_survey: true,
-    restart_survey: "Restart survey",
-    is_restart_survey: true
-  }
-
-  nextGroup.groups?.forEach(group => {
-    buttons.push(getGroupPostbackButton(group))
-  });
-  const response: Message = {
-    "type": "text", // ①
-    "text": nextGroup.title ?? '',
-    "quickReply": { // ②
-      "items": buttons,
-    }
-  }
-
-  return response
-}
-
-export const getGroupPostbackButton = (group: IGroup) => {
-  const item: QuickReplyItem = {
-    'type': 'action',
-    'action': {
-      'type': 'postback',
-      'label': group.title ?? '',
-      'data': `app_id=${group.app_id}&group_id=${group._id}&event_type=${constant.event_type.start}`,
-      'text': group.title ?? '',
-    },
-  }
-  return item
-}
-
 export const getDefaultStartButton = (app_id: string, group_id: string, survey_id: string, title: string) => {
   const item: QuickReplyItem = {
     'type': 'action',

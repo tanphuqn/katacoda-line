@@ -13,7 +13,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import express, { Application, Request, Response } from 'express';
 import appQuestionApi from './api/question'
-import { IQuestion, IEndPoint } from './utils/types';
+import { IQuestion, IEndPoint, IGoal } from './utils/types';
 import { constant } from './utils/constant';
 import RenderMessage from './utils/renderMessage';
 // Setup all LINE client and Express configurations.
@@ -80,29 +80,19 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
             })
             console.log("IAppEndPoint", endPoint)
             const question: IQuestion = endPoint.next_question
+            const goal: IGoal = endPoint.goal
             console.log("IAppQuestion", question)
             // Finall survery, go to Goal and Next group
-            if (question == null) {
+            if (goal) {
                 // Get message of Goal
                 const goalMessages = render.getGoal(endPoint.goal)
                 if (goalMessages && goalMessages.length > 0) {
                     messages = messages.concat(goalMessages);
                 }
-                // Get message of next groups
-                if (endPoint.next_group && endPoint.next_group.groups && endPoint.next_group.groups.length > 0) {
-                    messages.push(await render.getNextGroups(APP_ID, endPoint.next_group))
-                }
-                else {
-                    // Final question
-                    const message: TextMessage = {
-                        type: 'text',
-                        text: "Thank you so much"
-                    };
-                    // Reply to the user.
-                    messages.push(message)
-                }
             }
-            else {
+
+            // Finall survery, go to Goal and Next group
+            if (question) {
                 // Next question
                 messages = messages.concat(await render.getNextQuestion(survey_id, question));
             }
