@@ -18,11 +18,11 @@ export const getQuestionQuickReply = (question: IQuestion, survey_id: string, ti
   }
 
   if (init_quick_reply.is_restart_survey) {
-    buttons.push(getDefaultStartButton(question.app_id ?? "", question.group_id ?? "", survey_id, init_quick_reply.restart_survey))
+    buttons.push(getDefaultStartButton(question.app_id ?? "", question.group_id ?? "", survey_id, init_quick_reply.restart_survey, setting._id ?? ""))
   }
 
   question.answers?.forEach(answer => {
-    buttons.push(getAnswerPostbackButton(survey_id, question, answer))
+    buttons.push(getAnswerPostbackButton(survey_id, question, answer, setting._id ?? ""))
   });
   const response: Message = {
     "type": "text", // ①
@@ -35,28 +35,28 @@ export const getQuestionQuickReply = (question: IQuestion, survey_id: string, ti
   return response
 }
 
-export const getAnswerPostbackButton = (survey_id: string, question: IQuestion, answer: IAnswer) => {
+export const getAnswerPostbackButton = (survey_id: string, question: IQuestion, answer: IAnswer, campaign_id: string) => {
   const item: QuickReplyItem = {
     'type': 'action',
     "imageUrl": answer.image_url,
     'action': {
       'type': 'postback',
       'label': answer.title ?? '',
-      'data': `app_id=${question.app_id}&group_id=${question.group_id}&question_id=${question._id}&next_question_id=${answer.next_question_id}&answer_id=${answer._id}&answer_label=${answer.label}&survey_id=${survey_id}&event_type=${constant.event_type.answer}`,
+      'data': `app_id=${question.app_id}&group_id=${question.group_id}&campaign_id=${campaign_id}&question_id=${question._id}&next_question_id=${answer.next_question_id}&answer_id=${answer._id}&answer_label=${answer.label}&survey_id=${survey_id}&event_type=${constant.event_type.answer}`,
       'text': answer.title ?? '',
     },
   }
   return item
 }
 
-export const getDefaultStartButton = (app_id: string, group_id: string, survey_id: string, title: string) => {
+export const getDefaultStartButton = (app_id: string, group_id: string, survey_id: string, title: string, campaign_id: string) => {
   const item: QuickReplyItem = {
     'type': 'action',
     // "imageUrl": "https://example.com/sushi.png",
     'action': {
       'type': 'postback',
       'label': title,
-      'data': `app_id=${app_id}&group_id=${group_id}&survey_id=${survey_id}&event_type=${constant.event_type.start}`,
+      'data': `app_id=${app_id}&group_id=${group_id}&survey_id=${survey_id}&campaign_id=${campaign_id}&event_type=${constant.event_type.start}`,
       'text': title,
     },
   }
@@ -87,7 +87,7 @@ export const startQuickReply = (app_id: string, group_id: string, survey_id: str
             'action': {
               'type': 'postback',
               'label': init_quick_reply.start_survey,
-              'data': `app_id=${app_id}&group_id=${group_id}&survey_id=${survey_id}&event_type=${constant.event_type.start}`,
+              'data': `app_id=${app_id}&group_id=${group_id}&survey_id=${survey_id}&campaign_id=${setting._id}&event_type=${constant.event_type.start}`,
               'text': init_quick_reply.start_survey,
             },
           }
