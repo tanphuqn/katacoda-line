@@ -6,9 +6,9 @@ import {
   TextMessage,
 } from '@line/bot-sdk';
 import { constant } from './constant';
-import { IAnswer, IGoal, IGoalDetailImageType, IGroup, IInitQuickReply, INextGroup, IQuestion, ISetting } from './types';
+import { IAnswer, IGoal, IGoalDetailImageType, IGroup, IInitQuickReply, INextGroup, IQuestion, IInitial } from './types';
 
-export const getQuestionQuickReply = (question: IQuestion, survey_id: string, title: string, setting: ISetting) => {
+export const getQuestionQuickReply = (question: IQuestion, survey_id: string, title: string, setting: IInitial) => {
   let buttons: QuickReplyItem[] = []
   let init_quick_reply: IInitQuickReply = setting.init_quick_reply ?? {
     start_survey: "Start survey",
@@ -64,7 +64,7 @@ export const getDefaultStartButton = (app_id: string, group_id: string, survey_i
   return item
 }
 
-export const startQuickReply = (app_id: string, group_id: string, survey_id: string, title: string, setting: ISetting) => {
+export const startQuickReply = (app_id: string, group_id: string, survey_id: string, title: string, setting: IInitial) => {
   let message: Message
   const init_quick_reply: IInitQuickReply = setting.init_quick_reply ?? {
     start_survey: "Start survey",

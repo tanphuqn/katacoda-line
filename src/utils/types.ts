@@ -25,9 +25,18 @@ export enum EDeployStatus {
   completed = 'completed',
 }
 
-export interface ISettingRequest {
-  app_id: string
+// Initial
+export interface IInitial {
+  _id?: string
+  app_id?: string
+  welcomes?: Iwelcomes[]
+  init_quick_reply?: IInitQuickReply
+  title?: string
+  delivered?: number
+  activated?: boolean
+
 }
+
 export interface IInitQuickReply {
   start_survey: string
   is_start_survey: boolean
@@ -35,11 +44,14 @@ export interface IInitQuickReply {
   is_restart_survey: boolean
 }
 
-export interface ISetting {
-  _id?: string
-  app_id?: string
-  welcomes?: string[]
-  init_quick_reply?: IInitQuickReply
+export interface IInitialRequest {
+  app_id: string
+}
+
+export interface Iwelcomes {
+  name?: string
+  order?: number
+  fixed?: boolean
 }
 
 export interface IApp {

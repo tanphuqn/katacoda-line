@@ -1,8 +1,8 @@
-import { IQuestion, IQuestionPayload, ISetting, ISettingRequest } from '../utils/types'
+import { IInitial, IInitialRequest } from '../utils/types'
 import { NormApi } from './norm'
 
-export class AppSettingApi extends NormApi<ISetting> {
-  single = async (payload: ISettingRequest) => {
+export class AppSettingApi extends NormApi<IInitial> {
+  single = async (payload: IInitialRequest) => {
     const response = await this.axios.post('/v1/line/setting', payload)
     return this.responseHandler(response)
   }

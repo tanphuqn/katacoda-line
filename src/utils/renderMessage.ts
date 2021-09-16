@@ -3,7 +3,7 @@ import * as fs from "fs";
 import settingApi from '../api/setting'
 import { constant } from "./constant";
 import { getQuestionQuickReply, getTextMessage, getImageCarousel, startQuickReply } from './helper';
-import { IGoal, IMessage, IQuestion, ISetting } from "./types";
+import { IGoal, IMessage, IQuestion, IInitial } from "./types";
 
 export default class RenderMessage {
     private client: Client;
@@ -15,7 +15,7 @@ export default class RenderMessage {
     }
 
     public async getNextQuestion(survey_id: string, question: IQuestion) {
-        const setting: ISetting = await settingApi.single({ app_id: this.app_id })
+        const setting: IInitial = await settingApi.single({ app_id: this.app_id })
         let messages: Message[] = []
         let title: string = ''
         // Next question
@@ -68,7 +68,7 @@ export default class RenderMessage {
     }
 
     public async getWelcome(group_id: string, survey_id: string, event: WebhookEvent) {
-        const setting: ISetting = await settingApi.single({ app_id: this.app_id })
+        const setting: IInitial = await settingApi.single({ app_id: this.app_id })
         const welcomes = setting.welcomes
         let messages: Message[] = []
         // Create a new message.
@@ -76,7 +76,7 @@ export default class RenderMessage {
         let title: string = ''
         if (welcomes && welcomes?.length > 1) {
             for (let index = 0; index < welcomes.length - 1; index++) {
-                let text = welcomes[index]
+                let text = welcomes[index].name ?? ""
                 text = text.replace("{displayName}", profile.displayName)
                 text = text.replace("{userId}", profile.userId)
                 const message: TextMessage = {
@@ -88,11 +88,11 @@ export default class RenderMessage {
                 messages.push(message)
             }
 
-            title = welcomes[welcomes.length - 1];
+            title = welcomes[welcomes.length - 1].name ?? "";
         }
         else {
             if (welcomes && welcomes.length > 0) {
-                title = welcomes[0];
+                title = welcomes[0].name ?? "";
             }
 
         }
