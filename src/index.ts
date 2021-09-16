@@ -62,6 +62,8 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         const answer_id = params.get("answer_id") || '';
         const event_type = params.get("event_type") || '';
         const survey_id = params.get("survey_id") || '';
+        const campaign_id = params.get("campaign_id") || '';
+        const answer_label = params.get("answer_label") || '';
         // Check the end survey
         if (params.get("app_id") === '') {
             // TODO the sumarry survey
@@ -76,7 +78,9 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
                 group_id: group_id,
                 answer_id: answer_id,
                 question_id: question_id,
-                survey_id: survey_id
+                survey_id: survey_id,
+                campaign_id: campaign_id,
+                answer_label: answer_label
             })
             console.log("IAppEndPoint", endPoint)
             const question: IQuestion = endPoint.next_question

@@ -12,6 +12,9 @@ export interface IQuestionPayload {
   question_id?: string
   answer_id?: string
   survey_id?: string
+  campaign_id?: string
+  answer_label?: string
+
 }
 export interface IUser {
   _id?: string
