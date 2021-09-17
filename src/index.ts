@@ -6,7 +6,6 @@ import {
     middleware,
     MiddlewareConfig,
     WebhookEvent,
-    TextMessage,
     MessageAPIResponseBase,
     Message,
     Profile,
@@ -53,7 +52,6 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
     const { replyToken } = event;
     // Load question from api
     let messages: Message[] = []
-    let title = ''
     if (event.type === 'postback') {
         const data = event.postback.data
         let params = new URLSearchParams(data);
@@ -117,8 +115,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
                 const profile: Profile = await client.getProfile(event.source.userId ?? "")
                 if (profile) {
                     chatBotApi.saveUser({
-                        user_id: profile.userId,
-                        display_name: profile.displayName
+                        user_id: profile.userId, display_name: profile.displayName
                     })
                 }
             }
