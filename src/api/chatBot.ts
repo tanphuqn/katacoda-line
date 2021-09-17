@@ -1,4 +1,4 @@
-import { IInitialRequest, IQuestionPayload, IUserPyaload } from '../utils/types'
+import { IInitialRequest, IQuestionPayload, IUserPayload } from '../utils/types'
 import { NormApi } from './norm'
 
 export class AppChatBotApi extends NormApi<{}> {
@@ -7,7 +7,7 @@ export class AppChatBotApi extends NormApi<{}> {
     return this.responseHandler(response)
   }
 
-  saveUser = async (payload: IUserPyaload) => {
+  saveUser = async (payload: IUserPayload) => {
     const response = await this.axios.post('/v1/line/save-user', payload)
     return this.responseHandler(response)
   }

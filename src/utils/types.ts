@@ -16,7 +16,8 @@ export interface IQuestionPayload {
   answer_label?: string
 
 }
-export interface IUserPyaload {
+export interface IUserPayload {
+  app_id?: string
   user_id?: string
   display_name: string
 }

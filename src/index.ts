@@ -115,7 +115,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
                 const profile: Profile = await client.getProfile(event.source.userId ?? "")
                 if (profile) {
                     chatBotApi.saveUser({
-                        user_id: profile.userId, display_name: profile.displayName
+                        app_id: APP_ID, user_id: profile.userId, display_name: profile.displayName
                     })
                 }
             }
