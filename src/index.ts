@@ -9,10 +9,11 @@ import {
     TextMessage,
     MessageAPIResponseBase,
     Message,
+    Profile,
 } from '@line/bot-sdk';
 import { v4 as uuidv4 } from 'uuid';
 import express, { Application, Request, Response } from 'express';
-import appQuestionApi from './api/question'
+import chatBotApi from './api/chatBot'
 import { IQuestion, IEndPoint, IGoal } from './utils/types';
 import { constant } from './utils/constant';
 import RenderMessage from './utils/renderMessage';
@@ -71,7 +72,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         }
 
         if (event_type === constant.event_type.answer || event_type === constant.event_type.start) {
-            const endPoint: IEndPoint = await appQuestionApi.single({
+            const endPoint: IEndPoint = await chatBotApi.getQuestion({
                 app_id: APP_ID,
                 user_id: event.source.userId ?? '',
                 next_question_id: next_question_id,
@@ -112,6 +113,15 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
 
     } else {
         if (event.type !== 'message') {
+            if (event.type === 'follow') {
+                const profile: Profile = await client.getProfile(event.source.userId ?? "")
+                if (profile) {
+                    chatBotApi.saveUser({
+                        user_id: profile.userId,
+                        display_name: profile.displayName
+                    })
+                }
+            }
             const survey_id = uuidv4();
             messages = messages.concat(await render.getWelcome("", survey_id, event));
         }

@@ -1,6 +1,5 @@
 import { Client, Message, Profile, TextMessage, WebhookEvent } from "@line/bot-sdk";
-import * as fs from "fs";
-import settingApi from '../api/setting'
+import chatBotApi from '../api/chatBot'
 import { constant } from "./constant";
 import { getQuestionQuickReply, getTextMessage, getImageCarousel, startQuickReply } from './helper';
 import { IGoal, IMessage, IQuestion, IInitial } from "./types";
@@ -15,7 +14,7 @@ export default class RenderMessage {
     }
 
     public async getNextQuestion(survey_id: string, question: IQuestion) {
-        const setting: IInitial = await settingApi.single({ app_id: this.app_id })
+        const setting: IInitial = await chatBotApi.getAppSetting({ app_id: this.app_id })
         let messages: Message[] = []
         let title: string = ''
         // Next question
@@ -68,7 +67,7 @@ export default class RenderMessage {
     }
 
     public async getWelcome(group_id: string, survey_id: string, event: WebhookEvent) {
-        const setting: IInitial = await settingApi.single({ app_id: this.app_id })
+        const setting: IInitial = await chatBotApi.getAppSetting({ app_id: this.app_id })
         const welcomes = setting.welcomes
         let messages: Message[] = []
         // Create a new message.

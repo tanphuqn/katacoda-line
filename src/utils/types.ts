@@ -16,11 +16,9 @@ export interface IQuestionPayload {
   answer_label?: string
 
 }
-export interface IUser {
-  _id?: string
-  displayName: string
-  email: string
-  photoURL?: string
+export interface IUserPyaload {
+  user_id?: string
+  display_name: string
 }
 
 export enum EDeployStatus {
