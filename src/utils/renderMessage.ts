@@ -21,11 +21,14 @@ export default class RenderMessage {
             for (let index = 0; index < question.messages.length; index++) {
                 const element: IMessageDetail = question.messages[index];
                 if (element.type === constant.detail_image_type.message) {
-                    messages.push(getTextMessage(element.message ?? ''))
+                    if (element.message) {
+                        messages.push(getTextMessage(element.message))
+                    }
+
                 }
                 else {
                     if (element.images) {
-                        messages.push(getImageCarousel(question.title ?? "", element.images ?? []))
+                        messages.push(getImageCarousel(question.title ?? "", element.images))
                     }
                 }
             }
@@ -44,11 +47,13 @@ export default class RenderMessage {
             for (let index = 0; index < msg.messages.length; index++) {
                 const element: IMessageDetail = msg.messages[index];
                 if (element.type === constant.detail_image_type.message) {
-                    messages.push(getTextMessage(element.message ?? ''))
+                    if (element.message) {
+                        messages.push(getTextMessage(element.message))
+                    }
                 }
                 else {
                     if (element.images) {
-                        messages.push(getImageCarousel(msg.title ?? "", element.images ?? []))
+                        messages.push(getImageCarousel(msg.title ?? "", element.images))
                     }
                 }
             }
@@ -66,10 +71,14 @@ export default class RenderMessage {
         details?.forEach(element => {
             console.log("element", element)
             if (element.type == constant.detail_image_type.message) {
-                messages.push(getTextMessage(element.message ?? ''))
+                if (element.message) {
+                    messages.push(getTextMessage(element.message))
+                }
             }
             else {
-                messages.push(getImageCarousel(goal.title ?? "", element.images ?? []))
+                if (element.images) {
+                    messages.push(getImageCarousel(goal.title ?? "", element.images))
+                }
             }
         });
 
@@ -87,22 +96,18 @@ export default class RenderMessage {
         let messages: Message[] = []
         // Create a new message.
         const profile: Profile = await this.client.getProfile(event.source.userId ?? '')
-        let title: string = ''
+        let title: string = ""
         if (welcomes && welcomes?.length > 1) {
             for (let index = 0; index < welcomes.length - 1; index++) {
-                let text = welcomes[index].name ?? ""
-                text = text.replace("{displayName}", profile.displayName)
-                text = text.replace("{userId}", profile.userId)
-                const message: TextMessage = {
-                    type: 'text',
-                    text: text
-                };
-
-                // Reply to the user.
-                messages.push(message)
+                let text = welcomes[index].name
+                if (text) {
+                    text = text.replace("{displayName}", profile.displayName)
+                    text = text.replace("{userId}", profile.userId)
+                    messages.push(getTextMessage(text))
+                }
             }
 
-            title = welcomes[welcomes.length - 1].name ?? "";
+            title = welcomes[welcomes.length - 1].name ?? ""
         }
         else {
             if (welcomes && welcomes.length > 0) {
@@ -111,11 +116,14 @@ export default class RenderMessage {
 
         }
 
-        title = title.replace("{displayName}", profile.displayName)
-        title = title.replace("{userId}", profile.userId)
-        // Create a quick replies message.
-        const message: Message = startQuickReply(this.app_id, survey_id, title, setting)
-        messages.push(message)
+        if (title) {
+            title = title.replace("{displayName}", profile.displayName)
+            title = title.replace("{userId}", profile.userId)
+            // Create a quick replies message.
+            const message: Message = startQuickReply(this.app_id, survey_id, title, setting)
+            messages.push(message)
+        }
+
 
         return messages
     }
