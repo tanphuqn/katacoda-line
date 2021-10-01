@@ -81,25 +81,21 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
             })
             console.log("IAppEndPoint", endPoint)
             const question: IQuestion = endPoint.next_question
-            const message: IMessage = endPoint.next_question
+            const message: IMessage = endPoint.next_message
             const goal: IGoal = endPoint.next_goal
             console.log("IAppQuestion", question)
-            // Finall survery, go to Goal
+            // Get message of Goal
             if (goal) {
-                // Get message of Goal
-                const goalMessages = await render.getGoal(survey_id, goal)
-                if (goalMessages && goalMessages.length > 0) {
-                    messages = messages.concat(goalMessages);
-                }
+                messages = messages.concat(await render.getGoal(survey_id, goal));
             }
 
-            // Finall survery, go to Goal
+            // Render question
             if (question) {
                 // Next question
                 messages = messages.concat(await render.getQuestion(survey_id, question));
             }
 
-            // Finall survery, go to Goal
+            // Render message
             if (message) {
                 // Next question
                 messages = messages.concat(await render.getMessage(message));
