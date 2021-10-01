@@ -13,7 +13,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import express, { Application, Request, Response } from 'express';
 import chatBotApi from './api/chatBot'
-import { IQuestion, IEndPoint, IGoal } from './utils/types';
+import { IQuestion, IEndPoint, IGoal, IMessage } from './utils/types';
 import { constant } from './utils/constant';
 import RenderMessage from './utils/renderMessage';
 // Setup all LINE client and Express configurations.
@@ -55,14 +55,13 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
     if (event.type === 'postback') {
         const data = event.postback.data
         let params = new URLSearchParams(data);
-        const group_id = params.get("group_id") || '';
-        const question_id = params.get("question_id") || '';
-        const next_question_id = params.get("next_question_id") || '';
+        const resource_id = params.get("resource_id") || '';
         const answer_id = params.get("answer_id") || '';
         const event_type = params.get("event_type") || '';
         const survey_id = params.get("survey_id") || '';
         const campaign_id = params.get("campaign_id") || '';
         const answer_label = params.get("answer_label") || '';
+        const resource_type = params.get("resource_type") || "question"
         // Check the end survey
         if (params.get("app_id") === '') {
             // TODO the sumarry survey
@@ -73,36 +72,42 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
             const endPoint: IEndPoint = await chatBotApi.getQuestion({
                 app_id: APP_ID,
                 user_id: event.source.userId ?? '',
-                next_question_id: next_question_id,
-                group_id: group_id,
-                answer_id: answer_id,
-                question_id: question_id,
-                survey_id: survey_id,
                 campaign_id: campaign_id,
-                answer_label: answer_label
+                survey_id: survey_id,
+                resource_id: resource_id,
+                answer_id: answer_id,
+                answer_label: answer_label,
+                resource_type: resource_type,
             })
             console.log("IAppEndPoint", endPoint)
             const question: IQuestion = endPoint.next_question
-            const goal: IGoal = endPoint.goal
+            const message: IMessage = endPoint.next_question
+            const goal: IGoal = endPoint.next_goal
             console.log("IAppQuestion", question)
-            // Finall survery, go to Goal and Next group
+            // Finall survery, go to Goal
             if (goal) {
                 // Get message of Goal
-                const goalMessages = render.getGoal(endPoint.goal)
+                const goalMessages = await render.getGoal(survey_id, goal)
                 if (goalMessages && goalMessages.length > 0) {
                     messages = messages.concat(goalMessages);
                 }
             }
 
-            // Finall survery, go to Goal and Next group
+            // Finall survery, go to Goal
             if (question) {
                 // Next question
-                messages = messages.concat(await render.getNextQuestion(survey_id, question));
+                messages = messages.concat(await render.getQuestion(survey_id, question));
+            }
+
+            // Finall survery, go to Goal
+            if (message) {
+                // Next question
+                messages = messages.concat(await render.getMessage(message));
             }
         }
         else if (event_type === constant.event_type.welcome) {
             const survey_id = uuidv4();
-            messages = messages.concat(await render.getWelcome(group_id, survey_id, event));
+            messages = messages.concat(await render.getWelcome(survey_id, event));
         }
         else {
             // TODO
@@ -120,7 +125,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
                 }
             }
             const survey_id = uuidv4();
-            messages = messages.concat(await render.getWelcome("", survey_id, event));
+            messages = messages.concat(await render.getWelcome(survey_id, event));
         }
     }
 

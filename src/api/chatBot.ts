@@ -1,4 +1,4 @@
-import { IInitialRequest, IQuestionPayload, IUserPayload } from '../utils/types'
+import { IInitialRequest, IResourcePayload, IUserPayload } from '../utils/types'
 import { NormApi } from './norm'
 
 export class AppChatBotApi extends NormApi<{}> {
@@ -12,7 +12,7 @@ export class AppChatBotApi extends NormApi<{}> {
     return this.responseHandler(response)
   }
 
-  getQuestion = async (payload: IQuestionPayload) => {
+  getQuestion = async (payload: IResourcePayload) => {
     const response = await this.axios.post('/v1/line/question', payload)
     return this.responseHandler(response)
   }

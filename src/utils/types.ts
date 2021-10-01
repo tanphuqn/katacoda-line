@@ -1,124 +1,70 @@
+export interface IInitialRequest {
+  app_id: string
+}
 
 export interface IEndPoint {
   next_question: IQuestion
-  goal: IGoal
+  next_message: IMessage
+  next_goal: IGoal
 }
-
-export interface IQuestionPayload {
+export interface IResourcePayload {
   app_id?: string
   user_id?: string
-  next_question_id?: string
-  group_id?: string
-  question_id?: string
+  resource_id?: string
   answer_id?: string
   survey_id?: string
   campaign_id?: string
   answer_label?: string
-
+  resource_type?: string
 }
+
 export interface IUserPayload {
   app_id?: string
   user_id?: string
   display_name: string
 }
 
-export enum EDeployStatus {
-  runnning = 'running',
-  completed = 'completed',
-}
 
-// Initial
-export interface IInitial {
-  _id?: string
-  app_id?: string
-  welcomes?: Iwelcomes[]
-  init_quick_reply?: IInitQuickReply
-  title?: string
-  delivered?: number
-  activated?: boolean
-
-}
-
-export interface IInitQuickReply {
-  start_survey: string
-  is_start_survey: boolean
-  restart_survey: string
-  is_restart_survey: boolean
-}
-
-export interface IInitialRequest {
-  app_id: string
-}
-
-export interface Iwelcomes {
-  name?: string
-  order?: number
-  fixed?: boolean
-}
-
-export interface IApp {
-  _id?: string
-  name?: string
-  token?: string
-  secret?: string
-  app_prefix?: string
-  platform?: string
-  deployed_status?: EDeployStatus
-  triggered_at?: string
-  deployed_at?: string
-  logs?: string[]
-  created_at?: string
-  updated_at?: string
-}
-export interface IAnswer {
-  _id?: string
-  title?: string
-  label?: string
-  image_url: string
-  next_question_id: string
-}
-
-export interface IMessage {
-  _id?: string
-  data?: string
-}
-
+// Question
 export interface IQuestion {
   _id?: string
   app_id?: string
-  group_id?: string
   title?: string
-  messages?: IMessage[]
+  messages?: IMessageDetail[]
   answers?: IAnswer[]
   user_id?: string
   created_at?: string
   updated_at?: string
+  applied_campain?: number
 }
 
-export interface INextGroup {
+export interface IAnswer {
+  _id?: string
+  label?: string
   title?: string
-  groups: IGroup[]
+  image_url: string
 }
 
 
-export interface IGroup {
+// Messages
+export interface IMessage {
   _id?: string
   title?: string
-  ordering?: number
-  next_group_ids?: string[]
   app_id?: string
-  user_id?: string
-  created_at?: string
-  updated_at?: string
+  messages?: IMessageDetail[]
+  applied_campain?: number
+
 }
 
-export interface IGroupListRequest {
-  app_id: string
+export interface IMessageDetail {
+  type?: string
+  message?: string // If type is 'message'
+  images?: DetailImageType[] // If type is image
 }
 
-export interface IQuestionListRequest {
-  app_id: string
-  group_id: string
+export interface DetailImageType {
+  image_url?: string
+  click_url?: string
 }
 
 // Goal
@@ -127,28 +73,39 @@ export interface IGoal {
   app_id?: string
   title?: string
   details?: IGoalDetail[]
-  conditions?: IGoalCondition[]
-  group_id?: string
-  next_group_ids?: string[]
+  answers?: IAnswer[]
+  applied_campain?: number
 }
+
 
 export interface IGoalDetail {
   type?: string
   message?: string // If type is 'message'
-  images?: IGoalDetailImageType[] // If type is image
-}
-export interface IGoalCondition {
-  condition?: IGoalConditionDetail[]
+  images?: DetailImageType[] // If type is image
 }
 
-export interface IGoalConditionDetail {
-  question_id?: string
-  answer_id?: string
+// Initial
+export interface IInitialCampaign {
+  _id?: string
+  app_id?: string
+  welcomes?: Iwelcomes[]
+  init_quick_reply?: IInitQuickReply
+  title?: string
+  delivered?: number
+  is_active?: boolean
+  // scenarios?: IScenario[]
 }
 
-export interface IGoalDetailImageType {
-  image_url?: string
-  click_url?: string
+
+export interface Iwelcomes {
+  name?: string
+  order?: number
+  fixed?: boolean
 }
 
-
+export interface IInitQuickReply {
+  start_survey: string
+  is_start_survey: boolean
+  restart_survey: string
+  is_restart_survey: boolean
+}

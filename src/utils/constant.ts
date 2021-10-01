@@ -7,8 +7,15 @@ export const constant = {
     answer: 'answer',
   },
 
-  goal_detail_type: {
+  detail_image_type: {
     message: 'message',
     image: 'image',
   },
+
+  resource_type: {
+    question: 'question',
+    message: 'message',
+    goal: 'goal',
+  }
+  ,
 };
