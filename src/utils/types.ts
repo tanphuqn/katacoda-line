@@ -21,7 +21,8 @@ export interface IResourcePayload {
 export interface IUserPayload {
   app_id?: string
   user_id?: string
-  display_name: string
+  display_name?: string
+  is_active: boolean
 }
 
 

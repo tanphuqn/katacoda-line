@@ -124,7 +124,10 @@ const followEventHandler = async (event: WebhookEvent): Promise<MessageAPIRespon
     const profile: Profile = await client.getProfile(event.source.userId ?? "")
     if (profile) {
         chatBotApi.saveUser({
-            app_id: APP_ID, user_id: profile.userId, display_name: profile.displayName
+            app_id: APP_ID,
+            user_id: profile.userId,
+            display_name: profile.displayName,
+            is_active: true
         })
     }
     const survey_id = uuidv4();
@@ -145,16 +148,14 @@ const unFollowEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
     ) {
         return;
     }
-    const profile: Profile = await client.getProfile(event.source.userId ?? "")
-    if (profile) {
-        chatBotApi.saveUser({
-            app_id: APP_ID, user_id: profile.userId, display_name: profile.displayName
-        })
-    }
+    chatBotApi.saveUser({
+        app_id: APP_ID,
+        user_id: event.source.userId,
+        is_active: false
+    })
 
     return;
 };
-
 
 // Function handler to receive the text.
 const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponseBase | undefined> => {
