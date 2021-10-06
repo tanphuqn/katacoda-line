@@ -165,15 +165,16 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
     }
 
     // Process all message related variables here.
-    const { replyToken } = event;
+    // const { replyToken } = event;
     // Load question from api
-    let messages: Message[] = []
-    messages.push(getTextMessage(event.message.text))
-    console.log("messages", messages)
-    if (messages.length > 0) {
-        // Reply to the user.
-        await client.replyMessage(replyToken, messages);
-    }
+    // let messages: Message[] = []
+    // messages.push(getTextMessage(event.message.text))
+    console.log("event.message.text", event.message.text)
+    // console.log("messages", messages)
+    // if (messages.length > 0) {
+    //     // Reply to the user.
+    //     await client.replyMessage(replyToken, messages);
+    // }
     return;
 };
 
