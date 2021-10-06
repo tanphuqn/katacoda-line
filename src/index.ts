@@ -16,6 +16,7 @@ import chatBotApi from './api/chatBot'
 import { IQuestion, IEndPoint, IGoal, IMessage } from './utils/types';
 import { constant } from './utils/constant';
 import RenderMessage from './utils/renderMessage';
+import { getTextMessage } from './utils/helper';
 // Setup all LINE client and Express configurations.
 const clientConfig: ClientConfig = {
     channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || '',
@@ -35,16 +36,130 @@ const render = new RenderMessage({ client: client, app_id: APP_ID });
 
 client.deleteDefaultRichMenu()
 
+// Function handler to receive the postback.
+const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponseBase | undefined> => {
+    if (event.type !== 'postback') {
+        return;
+    }
+    // Load question from api
+    let messages: Message[] = []
+
+    const data = event.postback.data
+    let params = new URLSearchParams(data);
+    const resource_id = params.get("resource_id") || '';
+    const answer_id = params.get("answer_id") || '';
+    const event_type = params.get("event_type") || '';
+    const survey_id = params.get("survey_id") || '';
+    const campaign_id = params.get("campaign_id") || '';
+    const answer_label = params.get("answer_label") || '';
+    const resource_type = params.get("resource_type") || "question"
+    // Check the end survey
+    if (params.get("app_id") === '') {
+        // TODO the sumarry survey
+        return
+    }
+
+    if (event_type === constant.event_type.answer || event_type === constant.event_type.start) {
+        const endPoint: IEndPoint = await chatBotApi.getQuestion({
+            app_id: APP_ID,
+            user_id: event.source.userId ?? '',
+            campaign_id: campaign_id,
+            survey_id: survey_id,
+            resource_id: resource_id,
+            answer_id: answer_id,
+            answer_label: answer_label,
+            resource_type: resource_type,
+        })
+        console.log("IAppEndPoint", endPoint)
+        const question: IQuestion = endPoint.next_question
+        const message: IMessage = endPoint.next_message
+        const goal: IGoal = endPoint.next_goal
+        console.log("IAppQuestion", question)
+        // Get message of Goal
+        if (goal) {
+            messages = messages.concat(await render.getGoal(survey_id, goal));
+        }
+
+        // Render question
+        if (question) {
+            // Next question
+            messages = messages.concat(await render.getQuestion(survey_id, question));
+        }
+
+        // Render message
+        if (message) {
+            // Next question
+            messages = messages.concat(await render.getMessage(message));
+        }
+    }
+    else if (event_type === constant.event_type.welcome) {
+        const survey_id = uuidv4();
+        messages = messages.concat(await render.getWelcome(survey_id, event));
+    }
+    else {
+        // TODO
+    }
+
+    console.log("messages", messages)
+    if (messages.length > 0) {
+        // Reply to the user.
+        await client.replyMessage(event.replyToken, messages);
+    }
+    return;
+};
+
+
+// Function handler to receive the follow.
+const followEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponseBase | undefined> => {
+    console.log("event", event);
+    if (event.type !== 'join'
+        && event.type !== 'follow'
+        && event.type !== 'memberJoined'
+    ) {
+        return;
+    }
+
+    // Load question from api
+    let messages: Message[] = []
+    const profile: Profile = await client.getProfile(event.source.userId ?? "")
+    if (profile) {
+        chatBotApi.saveUser({
+            app_id: APP_ID, user_id: profile.userId, display_name: profile.displayName
+        })
+    }
+    const survey_id = uuidv4();
+    messages = messages.concat(await render.getWelcome(survey_id, event));
+
+    console.log("messages", messages)
+    if (messages.length > 0) {
+        // Reply to the user.
+        await client.replyMessage(event.replyToken || "", messages);
+    }
+    return;
+};
+
+// Function handler to receive the follow.
+const unFollowEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponseBase | undefined> => {
+    if (event.type !== 'unfollow'
+        && event.type !== 'leave'
+    ) {
+        return;
+    }
+    const profile: Profile = await client.getProfile(event.source.userId ?? "")
+    if (profile) {
+        chatBotApi.saveUser({
+            app_id: APP_ID, user_id: profile.userId, display_name: profile.displayName
+        })
+    }
+
+    return;
+};
+
 
 // Function handler to receive the text.
 const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponseBase | undefined> => {
     console.log("event", event);
-    // Process all variables here.
-    if (event.type !== 'join'
-        && event.type !== 'follow'
-        && event.type !== 'memberJoined'
-        && event.type !== 'message'
-        && event.type !== 'postback') {
+    if (event.type !== 'message' || event.message.type !== 'text') {
         return;
     }
 
@@ -52,79 +167,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
     const { replyToken } = event;
     // Load question from api
     let messages: Message[] = []
-    if (event.type === 'postback') {
-        const data = event.postback.data
-        let params = new URLSearchParams(data);
-        const resource_id = params.get("resource_id") || '';
-        const answer_id = params.get("answer_id") || '';
-        const event_type = params.get("event_type") || '';
-        const survey_id = params.get("survey_id") || '';
-        const campaign_id = params.get("campaign_id") || '';
-        const answer_label = params.get("answer_label") || '';
-        const resource_type = params.get("resource_type") || "question"
-        // Check the end survey
-        if (params.get("app_id") === '') {
-            // TODO the sumarry survey
-            return
-        }
-
-        if (event_type === constant.event_type.answer || event_type === constant.event_type.start) {
-            const endPoint: IEndPoint = await chatBotApi.getQuestion({
-                app_id: APP_ID,
-                user_id: event.source.userId ?? '',
-                campaign_id: campaign_id,
-                survey_id: survey_id,
-                resource_id: resource_id,
-                answer_id: answer_id,
-                answer_label: answer_label,
-                resource_type: resource_type,
-            })
-            console.log("IAppEndPoint", endPoint)
-            const question: IQuestion = endPoint.next_question
-            const message: IMessage = endPoint.next_message
-            const goal: IGoal = endPoint.next_goal
-            console.log("IAppQuestion", question)
-            // Get message of Goal
-            if (goal) {
-                messages = messages.concat(await render.getGoal(survey_id, goal));
-            }
-
-            // Render question
-            if (question) {
-                // Next question
-                messages = messages.concat(await render.getQuestion(survey_id, question));
-            }
-
-            // Render message
-            if (message) {
-                // Next question
-                messages = messages.concat(await render.getMessage(message));
-            }
-        }
-        else if (event_type === constant.event_type.welcome) {
-            const survey_id = uuidv4();
-            messages = messages.concat(await render.getWelcome(survey_id, event));
-        }
-        else {
-            // TODO
-        }
-
-
-    } else {
-        if (event.type !== 'message') {
-            if (event.type === 'follow') {
-                const profile: Profile = await client.getProfile(event.source.userId ?? "")
-                if (profile) {
-                    chatBotApi.saveUser({
-                        app_id: APP_ID, user_id: profile.userId, display_name: profile.displayName
-                    })
-                }
-            }
-            const survey_id = uuidv4();
-            messages = messages.concat(await render.getWelcome(survey_id, event));
-        }
-    }
-
+    messages.push(getTextMessage(event.message.text))
     console.log("messages", messages)
     if (messages.length > 0) {
         // Reply to the user.
@@ -154,7 +197,26 @@ app.post(
         const results = await Promise.all(
             events.map(async (event: WebhookEvent) => {
                 try {
-                    await textEventHandler(event);
+                    console.log("event", event);
+                    // "message" | "unsend" | "follow" | "join" | "leave" | "memberJoined" | "memberLeft" | "postback" | "videoPlayComplete" | "beacon" | "accountLink" | "things"
+                    switch (event.type) {
+                        case "message":
+                            await textEventHandler(event);
+                            break;
+                        case "follow":
+                        case "join":
+                        case "memberJoined":
+                            await followEventHandler(event);
+                            break
+                        case "unfollow":
+                        case "leave":
+                        case "memberLeft":
+                            await unFollowEventHandler(event)
+                            break;
+                        case "postback":
+                            await postbackEventHandler(event);
+                            break;
+                    }
                 } catch (err: unknown) {
                     if (err instanceof Error) {
                         console.error(err);
