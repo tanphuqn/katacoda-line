@@ -126,21 +126,29 @@ export const getTemplateImageColumn = (image: DetailImageType) => {
 
 export const getImageCarousel = (title: string, images: DetailImageType[]) => {
   const columns: TemplateImageColumn[] = []
-  images?.forEach(element => {
-    const column = getTemplateImageColumn(element)
-    columns.push(column)
-  });
 
-  const message: Message = {
-    "type": "template",
-    "altText": title ?? '',
-    "template": {
-      "type": "image_carousel",
-      "columns": columns
-    }
+  if (images) {
+    images?.forEach(element => {
+      const column = getTemplateImageColumn(element)
+      columns.push(column)
+    });
   }
 
-  return message
+  let message: Message
+  if (columns.length > 0) {
+    message = {
+      "type": "template",
+      "altText": title ?? '',
+      "template": {
+        "type": "image_carousel",
+        "columns": columns
+      }
+    }
+    return message
+  }
+
+  return null
+
 }
 
 export const getTextMessage = (title: string) => {
