@@ -18,4 +18,9 @@ export const constant = {
     goal: 'goal',
   }
   ,
+  campaign_type: {
+    initial: 'initial',
+    push: 'push',
+  },
+
 };

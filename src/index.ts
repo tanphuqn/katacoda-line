@@ -46,13 +46,14 @@ const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
 
     const data = event.postback.data
     let params = new URLSearchParams(data);
+    const survey_id = params.get("survey_id") || '';
+    const campaign_type = params.get("campaign_type") || constant.campaign_type.initial;
+    const campaign_id = params.get("campaign_id") || '';
     const resource_id = params.get("resource_id") || '';
     const answer_id = params.get("answer_id") || '';
-    const event_type = params.get("event_type") || '';
-    const survey_id = params.get("survey_id") || '';
-    const campaign_id = params.get("campaign_id") || '';
     const answer_label = params.get("answer_label") || '';
     const resource_type = params.get("resource_type") || "question"
+    const event_type = params.get("event_type") || '';
     // Check the end survey
     if (params.get("app_id") === '') {
         // TODO the sumarry survey
@@ -63,6 +64,7 @@ const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
         const endPoint: IEndPoint = await chatBotApi.getQuestion({
             app_id: APP_ID,
             user_id: event.source.userId ?? '',
+            campaign_type: campaign_type,
             campaign_id: campaign_id,
             survey_id: survey_id,
             resource_id: resource_id,

@@ -10,12 +10,13 @@ export interface IEndPoint {
 export interface IResourcePayload {
   app_id?: string
   user_id?: string
+  survey_id?: string
+  campaign_type?: string
+  campaign_id?: string
+  resource_type?: string
   resource_id?: string
   answer_id?: string
-  survey_id?: string
-  campaign_id?: string
   answer_label?: string
-  resource_type?: string
 }
 
 export interface IUserPayload {

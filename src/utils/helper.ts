@@ -42,7 +42,7 @@ export const getAnswerPostbackButton = (survey_id: string, resource: IQuestion |
     'action': {
       'type': 'postback',
       'label': answer.title ?? '',
-      'data': `app_id=${resource.app_id}&campaign_id=${campaign_id}&resource_id=${resource._id}&answer_id=${answer._id}&answer_label=${answer.label}&survey_id=${survey_id}&event_type=${constant.event_type.answer}&resource_type=${resource_type}`,
+      'data': `app_id=${resource.app_id}&campaign_type=${constant.campaign_type.initial}&campaign_id=${campaign_id}&resource_id=${resource._id}&answer_id=${answer._id}&answer_label=${answer.label}&survey_id=${survey_id}&event_type=${constant.event_type.answer}&resource_type=${resource_type}`,
       'text': answer.title ?? '',
     },
   }
@@ -56,7 +56,7 @@ export const getDefaultStartButton = (app_id: string, survey_id: string, title: 
     'action': {
       'type': 'postback',
       'label': title,
-      'data': `app_id=${app_id}&survey_id=${survey_id}&campaign_id=${campaign_id}&event_type=${constant.event_type.start}`,
+      'data': `app_id=${app_id}&survey_id=${survey_id}&campaign_type=${constant.campaign_type.initial}&campaign_id=${campaign_id}&event_type=${constant.event_type.start}`,
       'text': title,
     },
   }
@@ -87,7 +87,7 @@ export const startQuickReply = (app_id: string, survey_id: string, title: string
             'action': {
               'type': 'postback',
               'label': init_quick_reply.start_survey,
-              'data': `app_id=${app_id}&survey_id=${survey_id}&campaign_id=${setting._id}&event_type=${constant.event_type.start}`,
+              'data': `app_id=${app_id}&survey_id=${survey_id}&campaign_type=${constant.campaign_type.initial}&campaign_id=${setting._id}&event_type=${constant.event_type.start}`,
               'text': init_quick_reply.start_survey,
             },
           }
