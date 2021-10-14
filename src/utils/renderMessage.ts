@@ -28,7 +28,10 @@ export default class RenderMessage {
                 }
                 else {
                     if (element.images) {
-                        messages.push(getImageCarousel(question.title ?? "", element.images))
+                        const message = getImageCarousel(question.title ?? "", element.images)
+                        if (message) {
+                            messages.push(message)
+                        }
                     }
                 }
             }
@@ -53,7 +56,10 @@ export default class RenderMessage {
                 }
                 else {
                     if (element.images) {
-                        messages.push(getImageCarousel(msg.title ?? "", element.images))
+                        const message = getImageCarousel(msg.title ?? "", element.images)
+                        if (message) {
+                            messages.push(message)
+                        }
                     }
                 }
             }
@@ -77,7 +83,10 @@ export default class RenderMessage {
             }
             else {
                 if (element.images) {
-                    messages.push(getImageCarousel(goal.title ?? "", element.images))
+                    const message = getImageCarousel(goal.title ?? "", element.images)
+                    if (message) {
+                        messages.push(message)
+                    }
                 }
             }
         });
