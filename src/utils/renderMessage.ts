@@ -37,9 +37,10 @@ export default class RenderMessage {
             }
         }
         // Create a quick replies message.
-        const message: Message = getResourceQuickReply(question, survey_id, question.title ?? "", constant.resource_type.question, setting)
-        messages.push(message)
-
+        if (question.answers) {
+            const message: Message = getResourceQuickReply(question, survey_id, question.title ?? "", constant.resource_type.question, setting)
+            messages.push(message)
+        }
         return messages
     }
 
@@ -91,9 +92,12 @@ export default class RenderMessage {
             }
         });
 
-        // Create a quick replies message.
-        const message: Message = getResourceQuickReply(goal, survey_id, goal.title ?? "", constant.resource_type.goal, setting)
-        messages.push(message)
+        if (goal.answers) {
+            // Create a quick replies message.
+            const message: Message = getResourceQuickReply(goal, survey_id, goal.title ?? "", constant.resource_type.goal, setting)
+            messages.push(message)
+        }
+
 
         console.log("messages", messages)
         return messages
