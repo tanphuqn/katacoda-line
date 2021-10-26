@@ -72,35 +72,37 @@ const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
             answer_label: answer_label,
             resource_type: resource_type,
         })
-        console.log("next_resources", next_resources)
-        next_resources?.forEach(async function (item: any) {
-            const resource_type = item["resource_type"];
-            if (resource_type === constant.resource_type.question) {
-                const question: IQuestion = item;
-                // Render question
-                if (question) {
-                    // Next question
-                    messages = messages.concat(await render.getQuestion(survey_id, question));
+        console.log("next_resources: ", next_resources)
+        if (next_resources) {
+            for (let index = 0; index < next_resources.length; index++) {
+                const item = next_resources[index]
+                const resource_type = item["resource_type"];
+                console.log("item: ", item)
+                if (resource_type === constant.resource_type.question) {
+                    const question: IQuestion = item;
+                    // Render question
+                    if (question) {
+                        // Next question
+                        messages = messages.concat(await render.getQuestion(survey_id, question));
+                    }
+                }
+                else if (resource_type === constant.resource_type.goal) {
+                    const goal: IGoal = item;
+                    // Get message of Goal
+                    if (goal) {
+                        messages = messages.concat(await render.getGoal(survey_id, goal));
+                    }
+                }
+                else {
+                    const message: IMessage = item;
+                    // Render message
+                    if (message) {
+                        // Next question
+                        messages = messages.concat(await render.getMessage(message));
+                    }
                 }
             }
-            else if (resource_type === constant.resource_type.goal) {
-                const goal: IGoal = item;
-                // Get message of Goal
-                if (goal) {
-                    messages = messages.concat(await render.getGoal(survey_id, goal));
-                }
-            }
-            else {
-                const message: IMessage = item;
-                // Render message
-                if (message) {
-                    // Next question
-                    messages = messages.concat(await render.getMessage(message));
-                }
-            }
-
-        });
-
+        }
     }
     else if (event_type === constant.event_type.welcome) {
         const survey_id = uuidv4();
