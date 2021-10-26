@@ -74,9 +74,7 @@ export default class RenderMessage {
         const setting: IInitialCampaign = await chatBotApi.getAppSetting({ app_id: this.app_id })
         let messages: Message[] = []
         const details = goal.details
-        console.log("details", details)
         details?.forEach(element => {
-            console.log("element", element)
             if (element.type == constant.detail_image_type.message) {
                 if (element.message) {
                     messages.push(getTextMessage(element.message))
@@ -98,8 +96,6 @@ export default class RenderMessage {
             messages.push(message)
         }
 
-
-        console.log("messages", messages)
         return messages
     }
 
