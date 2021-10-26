@@ -61,7 +61,7 @@ const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
     }
 
     if (event_type === constant.event_type.answer || event_type === constant.event_type.start) {
-        const endPoint: IEndPoint = await chatBotApi.getQuestion({
+        const next_resources = await chatBotApi.getQuestion({
             app_id: APP_ID,
             user_id: event.source.userId ?? '',
             campaign_type: campaign_type,
@@ -72,27 +72,35 @@ const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
             answer_label: answer_label,
             resource_type: resource_type,
         })
-        console.log("IAppEndPoint", endPoint)
-        const question: IQuestion = endPoint.next_question
-        const message: IMessage = endPoint.next_message
-        const goal: IGoal = endPoint.next_goal
-        console.log("IAppQuestion", question)
-        // Get message of Goal
-        if (goal) {
-            messages = messages.concat(await render.getGoal(survey_id, goal));
-        }
+        console.log("next_resources", next_resources)
+        next_resources?.forEach(async function (item: any) {
+            const resource_type = item["resource_type"];
+            if (resource_type === constant.resource_type.question) {
+                const question: IQuestion = item;
+                // Render question
+                if (question) {
+                    // Next question
+                    messages = messages.concat(await render.getQuestion(survey_id, question));
+                }
+            }
+            else if (resource_type === constant.resource_type.goal) {
+                const goal: IGoal = item;
+                // Get message of Goal
+                if (goal) {
+                    messages = messages.concat(await render.getGoal(survey_id, goal));
+                }
+            }
+            else {
+                const message: IMessage = item;
+                // Render message
+                if (message) {
+                    // Next question
+                    messages = messages.concat(await render.getMessage(message));
+                }
+            }
 
-        // Render question
-        if (question) {
-            // Next question
-            messages = messages.concat(await render.getQuestion(survey_id, question));
-        }
+        });
 
-        // Render message
-        if (message) {
-            // Next question
-            messages = messages.concat(await render.getMessage(message));
-        }
     }
     else if (event_type === constant.event_type.welcome) {
         const survey_id = uuidv4();
