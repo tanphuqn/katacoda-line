@@ -80,7 +80,7 @@ const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
             for (let index = 0; index < next_resources.length; index++) {
                 const item = next_resources[index]
                 const resource_type = item["resource_type"];
-                console.log("item: ", item)
+                // console.log("item: ", item)
                 if (resource_type === constant.resource_type.question) {
                     const question: IQuestion = item;
                     // Render question
@@ -116,7 +116,7 @@ const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
         // TODO
     }
 
-    console.log("messages", messages)
+    // console.log("messages", messages)
     if (messages.length > 0) {
         // Reply to the user.
         await client.replyMessage(event.replyToken, messages);
@@ -151,7 +151,7 @@ const followEventHandler = async (event: WebhookEvent): Promise<MessageAPIRespon
 
     messages = messages.concat(render.getWelcome(survey_id, event, setting, profile));
 
-    console.log("messages", messages)
+    // console.log("messages", messages)
     if (messages.length > 0) {
         // Reply to the user.
         await client.replyMessage(event.replyToken || "", messages);
@@ -182,17 +182,17 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         return;
     }
 
-    // Process all message related variables here.
-    // const { replyToken } = event;
     // Load question from api
-    // let messages: Message[] = []
-    // messages.push(getTextMessage(event.message.text))
+    let messages: Message[] = []
+    const setting: IInitialCampaign = await chatBotApi.getAppSetting({ app_id: APP_ID })
+    const profile: Profile = await client.getProfile(event.source.userId ?? "")
+    const survey_id = uuidv4();
+    messages = messages.concat(render.getWelcome(survey_id, event, setting, profile));
     console.log("event.message.text", event.message.text)
-    // console.log("messages", messages)
-    // if (messages.length > 0) {
-    //     // Reply to the user.
-    //     await client.replyMessage(replyToken, messages);
-    // }
+    if (messages.length > 0) {
+        // Reply to the user.
+        await client.replyMessage(event.replyToken || "", messages);
+    }
     return;
 };
 
