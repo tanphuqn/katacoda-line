@@ -1,5 +1,4 @@
-import { Client, Message, Profile, TextMessage, WebhookEvent } from "@line/bot-sdk";
-import chatBotApi from '../api/chatBot'
+import { Client, Message, Profile, WebhookEvent } from "@line/bot-sdk";
 import { constant } from "./constant";
 import { getResourceQuickReply, getTextMessage, getImageCarousel, startQuickReply } from './helper';
 import { IGoal, IMessage, IQuestion, IInitialCampaign, IMessageDetail } from "./types";
@@ -13,8 +12,7 @@ export default class RenderMessage {
         this.app_id = configs.app_id;
     }
 
-    public async getQuestion(survey_id: string, question: IQuestion) {
-        const setting: IInitialCampaign = await chatBotApi.getAppSetting({ app_id: this.app_id })
+    public getQuestion(survey_id: string, question: IQuestion, setting: IInitialCampaign) {
         let messages: Message[] = []
         // Next question
         if (question.messages && question.messages?.length > 0) {
@@ -44,7 +42,7 @@ export default class RenderMessage {
         return messages
     }
 
-    public async getMessage(msg: IMessage) {
+    public getMessage(msg: IMessage) {
         let messages: Message[] = []
         // Next question
         if (msg.messages && msg.messages?.length > 0) {
@@ -70,8 +68,7 @@ export default class RenderMessage {
     }
 
 
-    public async getGoal(survey_id: string, goal: IGoal) {
-        const setting: IInitialCampaign = await chatBotApi.getAppSetting({ app_id: this.app_id })
+    public getGoal(survey_id: string, goal: IGoal, setting: IInitialCampaign) {
         let messages: Message[] = []
         const details = goal.details
         details?.forEach(element => {
@@ -99,12 +96,10 @@ export default class RenderMessage {
         return messages
     }
 
-    public async getWelcome(survey_id: string, event: WebhookEvent) {
-        const setting: IInitialCampaign = await chatBotApi.getAppSetting({ app_id: this.app_id })
+    public getWelcome(survey_id: string, event: WebhookEvent, setting: IInitialCampaign, profile: Profile) {
         const welcomes = setting.welcomes
         let messages: Message[] = []
         // Create a new message.
-        const profile: Profile = await this.client.getProfile(event.source.userId ?? '')
         let title: string = ""
         if (welcomes && welcomes?.length > 1) {
             for (let index = 0; index < welcomes.length - 1; index++) {

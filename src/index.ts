@@ -13,7 +13,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import express, { Application, Request, Response } from 'express';
 import chatBotApi from './api/chatBot'
-import { IQuestion, IEndPoint, IGoal, IMessage } from './utils/types';
+import { IQuestion, IEndPoint, IGoal, IMessage, IInitialCampaign } from './utils/types';
 import { constant } from './utils/constant';
 import RenderMessage from './utils/renderMessage';
 import { getTextMessage } from './utils/helper';
@@ -54,6 +54,9 @@ const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
     const answer_label = params.get("answer_label") || '';
     const resource_type = params.get("resource_type") || "question"
     const event_type = params.get("event_type") || '';
+
+    const setting: IInitialCampaign = await chatBotApi.getAppSetting({ app_id: APP_ID })
+
     // Check the end survey
     if (params.get("app_id") === '') {
         // TODO the sumarry survey
@@ -83,14 +86,14 @@ const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
                     // Render question
                     if (question) {
                         // Next question
-                        messages = messages.concat(await render.getQuestion(survey_id, question));
+                        messages = messages.concat(render.getQuestion(survey_id, question, setting));
                     }
                 }
                 else if (resource_type === constant.resource_type.goal) {
                     const goal: IGoal = item;
                     // Get message of Goal
                     if (goal) {
-                        messages = messages.concat(await render.getGoal(survey_id, goal));
+                        messages = messages.concat(render.getGoal(survey_id, goal, setting));
                     }
                 }
                 else {
@@ -98,7 +101,7 @@ const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
                     // Render message
                     if (message) {
                         // Next question
-                        messages = messages.concat(await render.getMessage(message));
+                        messages = messages.concat(render.getMessage(message));
                     }
                 }
             }
@@ -106,7 +109,8 @@ const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
     }
     else if (event_type === constant.event_type.welcome) {
         const survey_id = uuidv4();
-        messages = messages.concat(await render.getWelcome(survey_id, event));
+        const profile: Profile = await client.getProfile(event.source.userId ?? '')
+        messages = messages.concat(render.getWelcome(survey_id, event, setting, profile));
     }
     else {
         // TODO
@@ -133,6 +137,7 @@ const followEventHandler = async (event: WebhookEvent): Promise<MessageAPIRespon
 
     // Load question from api
     let messages: Message[] = []
+    const setting: IInitialCampaign = await chatBotApi.getAppSetting({ app_id: APP_ID })
     const profile: Profile = await client.getProfile(event.source.userId ?? "")
     if (profile) {
         chatBotApi.saveUser({
@@ -143,7 +148,8 @@ const followEventHandler = async (event: WebhookEvent): Promise<MessageAPIRespon
         })
     }
     const survey_id = uuidv4();
-    messages = messages.concat(await render.getWelcome(survey_id, event));
+
+    messages = messages.concat(render.getWelcome(survey_id, event, setting, profile));
 
     console.log("messages", messages)
     if (messages.length > 0) {
