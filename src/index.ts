@@ -185,9 +185,9 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
     }
 
     // Process all message related variables here.
-    // const { replyToken } = event;
+    const { replyToken } = event;
     // Load question from api
-    // let messages: Message[] = []
+    let messages: Message[] = []
     // messages.push(getTextMessage(event.message.text))
     console.log("event.message.text", event.message.text)
     if (retryKey) {
@@ -195,6 +195,7 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         client.setRequestOptionOnce({
             retryKey: retryKey[LINE_REQUEST_ID_HTTP_HEADER_NAME]
         })
+        client.replyMessage(replyToken, messages);
     }
 
     // console.log("messages", messages)
