@@ -192,6 +192,9 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
     console.log("event.message.text", event.message.text)
     if (retryKey) {
         console.log("retryKey", retryKey[LINE_REQUEST_ID_HTTP_HEADER_NAME])
+        client.setRequestOptionOnce({
+            retryKey: retryKey[LINE_REQUEST_ID_HTTP_HEADER_NAME]
+        })
     }
 
     // console.log("messages", messages)
