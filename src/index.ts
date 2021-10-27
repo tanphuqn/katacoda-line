@@ -77,7 +77,7 @@ const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
             answer_label: answer_label,
             resource_type: resource_type,
         })
-        console.log("next_resources: ", next_resources)
+        // console.log("next_resources: ", next_resources)
         if (next_resources) {
             for (let index = 0; index < next_resources.length; index++) {
                 const item = next_resources[index]
