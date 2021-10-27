@@ -130,7 +130,6 @@ const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
 
 // Function handler to receive the follow.
 const followEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponseBase | undefined> => {
-    console.log("event", event);
     if (event.type !== 'join'
         && event.type !== 'follow'
         && event.type !== 'memberJoined'
@@ -181,7 +180,6 @@ const unFollowEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
 
 // Function handler to receive the text.
 const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponseBase | undefined> => {
-    console.log("event", event);
     if (event.type !== 'message' || event.message.type !== 'text') {
         return;
     }
