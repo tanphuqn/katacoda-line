@@ -9,6 +9,7 @@ import {
     MessageAPIResponseBase,
     Message,
     Profile,
+    LINE_REQUEST_ID_HTTP_HEADER_NAME,
 } from '@line/bot-sdk';
 import { v4 as uuidv4 } from 'uuid';
 import express, { Application, Request, Response } from 'express';
@@ -35,6 +36,7 @@ const app: Application = express();
 const render = new RenderMessage({ client: client, app_id: APP_ID });
 
 client.deleteDefaultRichMenu()
+let retryKey: MessageAPIResponseBase
 
 // Function handler to receive the postback.
 const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponseBase | undefined> => {
@@ -154,7 +156,7 @@ const followEventHandler = async (event: WebhookEvent): Promise<MessageAPIRespon
     // console.log("messages", messages)
     if (messages.length > 0) {
         // Reply to the user.
-        await client.replyMessage(event.replyToken || "", messages);
+        retryKey = await client.replyMessage(event.replyToken || "", messages);
     }
     return;
 };
@@ -182,17 +184,21 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
         return;
     }
 
+    // Process all message related variables here.
+    // const { replyToken } = event;
     // Load question from api
-    let messages: Message[] = []
-    const setting: IInitialCampaign = await chatBotApi.getAppSetting({ app_id: APP_ID })
-    const profile: Profile = await client.getProfile(event.source.userId ?? "")
-    const survey_id = uuidv4();
-    messages = messages.concat(render.getWelcome(survey_id, event, setting, profile));
+    // let messages: Message[] = []
+    // messages.push(getTextMessage(event.message.text))
     console.log("event.message.text", event.message.text)
-    if (messages.length > 0) {
-        // Reply to the user.
-        await client.replyMessage(event.replyToken || "", messages);
+    if (retryKey) {
+        console.log("retryKey", retryKey[LINE_REQUEST_ID_HTTP_HEADER_NAME])
     }
+
+    // console.log("messages", messages)
+    // if (messages.length > 0) {
+    //     // Reply to the user.
+    //     await client.replyMessage(replyToken, messages);
+    // }
     return;
 };
 
