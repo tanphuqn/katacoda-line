@@ -36,7 +36,7 @@ const app: Application = express();
 const render = new RenderMessage({ client: client, app_id: APP_ID });
 
 client.deleteDefaultRichMenu()
-let retryKey: MessageAPIResponseBase
+let retryMessages: Message[]
 
 // Function handler to receive the postback.
 const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponseBase | undefined> => {
@@ -120,6 +120,7 @@ const postbackEventHandler = async (event: WebhookEvent): Promise<MessageAPIResp
 
     // console.log("messages", messages)
     if (messages.length > 0) {
+        retryMessages = messages
         // Reply to the user.
         await client.replyMessage(event.replyToken, messages);
     }
@@ -155,8 +156,9 @@ const followEventHandler = async (event: WebhookEvent): Promise<MessageAPIRespon
 
     // console.log("messages", messages)
     if (messages.length > 0) {
+        retryMessages = messages
         // Reply to the user.
-        retryKey = await client.replyMessage(event.replyToken || "", messages);
+        await client.replyMessage(event.replyToken || "", messages);
     }
     return;
 };
@@ -187,22 +189,12 @@ const textEventHandler = async (event: WebhookEvent): Promise<MessageAPIResponse
     // Process all message related variables here.
     const { replyToken } = event;
     // Load question from api
-    let messages: Message[] = []
-    // messages.push(getTextMessage(event.message.text))
+    console.log("retryMessages", retryMessages)
     console.log("event.message.text", event.message.text)
-    if (retryKey) {
-        console.log("retryKey", retryKey[LINE_REQUEST_ID_HTTP_HEADER_NAME])
-        client.setRequestOptionOnce({
-            retryKey: retryKey[LINE_REQUEST_ID_HTTP_HEADER_NAME]
-        })
-        client.replyMessage(replyToken, messages);
+    if (retryMessages && retryMessages.length > 0) {
+        await client.replyMessage(replyToken, retryMessages);
     }
 
-    // console.log("messages", messages)
-    // if (messages.length > 0) {
-    //     // Reply to the user.
-    //     await client.replyMessage(replyToken, messages);
-    // }
     return;
 };
 
